@@ -41,6 +41,9 @@ class PipelineConfig:
     test_size_per_source: int = 10
     val_size: int = 20
     test_size: int = 20
+    # Fixed before the validation run. Do not edit after seeing test scores.
+    verify_grid: tuple = (0.30, 0.40, 0.50, 0.60, 0.70)
+    prompt_token_limit: int = 512
 
 
 def select_device():
@@ -204,6 +207,183 @@ class BaselinePipeline:
                 ans = lines[0].replace("A:", "").strip()
                 fallback_used = True
         return ans, fallback_used, truncated, prompt_tokens
+
+    def _prompt(self, query, context, source_hint):
+        """Same wording as generate_answer. Used by the capped E and E-nov path."""
+        if source_hint == "pubmed":
+            domain_note = (
+                "You are a medical researcher. "
+                "Base your answer on clinical evidence and research findings."
+            )
+        else:
+            domain_note = (
+                "You are a clinical doctor answering a patient's question. "
+                "Give a practical, clear explanation."
+            )
+        if context:
+            return (
+                f"{domain_note}\n\n"
+                f"Reference cases from the knowledge base:\n{context}\n\n"
+                f"Question: {query}\n\n"
+                f"Think step by step. Provide a detailed, accurate medical answer "
+                f"using the reference cases above:"
+            )
+        return (
+            f"{domain_note}\n\n"
+            f"Question: {query}\n\n"
+            f"Think step by step. Provide a detailed, accurate medical answer:"
+        )
+
+    def _token_count(self, model, text):
+        tokenizer = model.tokenizer
+        previous_limit = tokenizer.model_max_length
+        tokenizer.model_max_length = int(1e9)
+        try:
+            return len(tokenizer(text, add_special_tokens=True)["input_ids"])
+        finally:
+            tokenizer.model_max_length = previous_limit
+
+    def cap_context(self, model, query, context, source_hint):
+        """Shorten retrieved context until the full prompt is within 512 tokens.
+
+        This is used only by configurations E and E-nov. Configurations A-D keep
+        the character cap in retrieve_context.
+        """
+        limit = self.config.prompt_token_limit
+        context = context or ""
+        prompt = self._prompt(query, context, source_hint)
+        tokens = self._token_count(model, prompt)
+        if tokens <= limit:
+            return context, prompt, tokens, False
+        low, high = 0, len(context)
+        best = ""
+        while low <= high:
+            mid = (low + high) // 2
+            candidate = context[:mid]
+            candidate_prompt = self._prompt(query, candidate, source_hint)
+            candidate_tokens = self._token_count(model, candidate_prompt)
+            if candidate_tokens <= limit:
+                best = candidate
+                low = mid + 1
+            else:
+                high = mid - 1
+        prompt = self._prompt(query, best, source_hint)
+        tokens = self._token_count(model, prompt)
+        if tokens <= limit:
+            return best, prompt, tokens, False
+        # The question and instructions alone exceed the limit. Drop tokens
+        # from the end of the prompt so the model still receives 512.
+        ids = model.tokenizer(prompt, add_special_tokens=True)["input_ids"][:limit]
+        prompt = model.tokenizer.decode(ids, skip_special_tokens=True)
+        return best, prompt, limit, True
+
+    def generate_capped(self, model, query, context, source_hint="general", allow_fallback=True):
+        """Generate with a token-capped prompt. Does not change generate_answer."""
+        context_used, prompt, prompt_tokens, truncated = self.cap_context(
+            model, query, context, source_hint
+        )
+        result = model(prompt, do_sample=False)
+        ans = result[0]["generated_text"].strip()
+        ans = re.sub(r'\b(\w+)( \1\b)+', r'\1', ans)
+        fallback_used = False
+        fallback_suppressed = False
+        if len(ans.split()) < 8 and context_used:
+            lines = [line for line in context_used.split("\n") if line.startswith("A:")]
+            if lines:
+                if allow_fallback:
+                    ans = lines[0].replace("A:", "").strip()
+                    fallback_used = True
+                else:
+                    fallback_suppressed = True
+        return {
+            "answer": ans,
+            "context_used": context_used,
+            "prompt_tokens": prompt_tokens,
+            "prompt_truncated": truncated,
+            "fallback_used": fallback_used,
+            "fallback_suppressed": fallback_suppressed,
+        }
+
+    def run_enov(self, query, source_hint="general"):
+        """D's mitigation on a token-capped context, without verification."""
+        context = self.retrieve_context(query)
+        student = self.generate_capped(
+            self.student_model, query, context, source_hint, allow_fallback=True
+        )
+        teacher = self.generate_capped(
+            self.teacher_model, query, context, source_hint, allow_fallback=True
+        )
+        info = self.detect_hallucination(student["answer"], teacher["answer"], student["context_used"])
+        final, msg = self.mitigate(student["answer"], teacher["answer"], info)
+        return {
+            "configuration": "E-nov",
+            "context_used": student["context_used"],
+            "student_answer": student["answer"],
+            "teacher_answer": teacher["answer"],
+            "student_verification": "",
+            "teacher_verification": "",
+            "student_support_similarity": "",
+            "teacher_support_similarity": "",
+            "tier": msg,
+            "final_answer": final,
+            "fallback_used": student["fallback_used"] or teacher["fallback_used"],
+            "fallback_suppressed": False,
+            "prompt_truncated": student["prompt_truncated"] or teacher["prompt_truncated"],
+            "truncated_generations": int(student["prompt_truncated"]) + int(teacher["prompt_truncated"]),
+            "prompt_tokens": max(student["prompt_tokens"], teacher["prompt_tokens"]),
+        }
+
+    def run_e(self, query, source_hint="general", threshold=0.50):
+        """Accept a supported student answer, else a supported teacher answer, else abstain."""
+        from verify import SUPPORTED, verify_support
+
+        context = self.retrieve_context(query)
+        student = self.generate_capped(
+            self.student_model, query, context, source_hint, allow_fallback=False
+        )
+        student_check = verify_support(
+            student["answer"], student["context_used"], self.similarity_score, threshold
+        )
+        teacher = None
+        teacher_check = None
+        if student_check["verdict"] == SUPPORTED:
+            final = student["answer"]
+            tier = "accept"
+        else:
+            teacher = self.generate_capped(
+                self.teacher_model, query, context, source_hint, allow_fallback=False
+            )
+            teacher_check = verify_support(
+                teacher["answer"], teacher["context_used"], self.similarity_score, threshold
+            )
+            if teacher_check["verdict"] == SUPPORTED:
+                final = teacher["answer"]
+                tier = "corrected"
+            else:
+                final = "The available evidence is insufficient to answer this reliably."
+                tier = "uncertain"
+        truncated_generations = int(student["prompt_truncated"])
+        prompt_tokens = student["prompt_tokens"]
+        if teacher is not None:
+            truncated_generations += int(teacher["prompt_truncated"])
+            prompt_tokens = max(prompt_tokens, teacher["prompt_tokens"])
+        return {
+            "configuration": "E",
+            "context_used": student["context_used"],
+            "student_answer": student["answer"],
+            "teacher_answer": "" if teacher is None else teacher["answer"],
+            "student_verification": student_check["verdict"],
+            "teacher_verification": "" if teacher_check is None else teacher_check["verdict"],
+            "student_support_similarity": student_check["similarity"],
+            "teacher_support_similarity": "" if teacher_check is None else teacher_check["similarity"],
+            "tier": tier,
+            "final_answer": final,
+            "fallback_used": False,
+            "fallback_suppressed": student["fallback_suppressed"] or (teacher or {}).get("fallback_suppressed", False),
+            "prompt_truncated": truncated_generations > 0,
+            "truncated_generations": truncated_generations,
+            "prompt_tokens": prompt_tokens,
+        }
 
     def similarity_score(self, a, b):
         e1 = self.embedder.encode(a, convert_to_tensor=True)

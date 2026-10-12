@@ -1,0 +1,580 @@
+/home/ubuntu/.local/lib/python3.12/site-packages/huggingface_hub/file_download.py:949: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+Knowledge-base leakage overlaps: 0
+Validation grid. Test questions are not scored in this loop.
+Grid: [0.3, 0.4, 0.5, 0.6, 0.7]
+val E thr=0.3 pubmed_validation_776 tier=accept sim=0.712 trunc=0
+val E thr=0.3 pubmed_validation_507 tier=corrected sim=0.604 trunc=0
+val E thr=0.3 pubmed_validation_895 tier=accept sim=0.514 trunc=0
+val E thr=0.3 pubmed_validation_922 tier=accept sim=0.497 trunc=0
+val E thr=0.3 pubmed_validation_33 tier=corrected sim=0.758 trunc=0
+val E thr=0.3 pubmed_validation_483 tier=accept sim=0.180 trunc=0
+val E thr=0.3 pubmed_validation_85 tier=uncertain sim=0.085 trunc=0
+val E thr=0.3 pubmed_validation_750 tier=accept sim=0.810 trunc=0
+val E thr=0.3 pubmed_validation_354 tier=corrected sim=0.259 trunc=0
+val E thr=0.3 pubmed_validation_523 tier=uncertain sim=0.052 trunc=0
+val E thr=0.3 healthcaremagic_validation_84919 tier=corrected sim=0.184 trunc=0
+val E thr=0.3 healthcaremagic_validation_63861 tier=corrected sim=0.196 trunc=0
+val E thr=0.3 healthcaremagic_validation_68992 tier=accept sim=0.727 trunc=0
+val E thr=0.3 healthcaremagic_validation_37810 tier=corrected sim=0.236 trunc=0
+val E thr=0.3 healthcaremagic_validation_89911 tier=accept sim=0.525 trunc=0
+val E thr=0.3 healthcaremagic_validation_50243 tier=uncertain sim=0.000 trunc=0
+val E thr=0.3 healthcaremagic_validation_33320 tier=accept sim=0.687 trunc=0
+val E thr=0.3 healthcaremagic_validation_25600 tier=corrected sim=0.672 trunc=0
+val E thr=0.3 healthcaremagic_validation_94946 tier=corrected sim=0.687 trunc=0
+val E thr=0.3 healthcaremagic_validation_87201 tier=accept sim=0.607 trunc=0
+validation-only 0.3 wins 10 uncertain 3
+val E thr=0.4 pubmed_validation_776 tier=uncertain sim=0.078 trunc=0
+val E thr=0.4 pubmed_validation_507 tier=corrected sim=0.604 trunc=0
+val E thr=0.4 pubmed_validation_895 tier=uncertain sim=0.133 trunc=0
+val E thr=0.4 pubmed_validation_922 tier=accept sim=0.497 trunc=0
+val E thr=0.4 pubmed_validation_33 tier=uncertain sim=0.094 trunc=0
+val E thr=0.4 pubmed_validation_483 tier=corrected sim=0.642 trunc=0
+val E thr=0.4 pubmed_validation_85 tier=uncertain sim=0.085 trunc=0
+val E thr=0.4 pubmed_validation_750 tier=uncertain sim=0.051 trunc=0
+val E thr=0.4 pubmed_validation_354 tier=uncertain sim=0.059 trunc=0
+val E thr=0.4 pubmed_validation_523 tier=uncertain sim=0.052 trunc=0
+val E thr=0.4 healthcaremagic_validation_84919 tier=uncertain sim=0.013 trunc=0
+val E thr=0.4 healthcaremagic_validation_63861 tier=uncertain sim=0.000 trunc=0
+val E thr=0.4 healthcaremagic_validation_68992 tier=accept sim=0.727 trunc=0
+val E thr=0.4 healthcaremagic_validation_37810 tier=corrected sim=0.236 trunc=0
+val E thr=0.4 healthcaremagic_validation_89911 tier=accept sim=0.525 trunc=0
+val E thr=0.4 healthcaremagic_validation_50243 tier=uncertain sim=0.000 trunc=0
+val E thr=0.4 healthcaremagic_validation_33320 tier=accept sim=0.687 trunc=0
+val E thr=0.4 healthcaremagic_validation_25600 tier=corrected sim=0.672 trunc=0
+val E thr=0.4 healthcaremagic_validation_94946 tier=uncertain sim=0.007 trunc=0
+val E thr=0.4 healthcaremagic_validation_87201 tier=accept sim=0.607 trunc=0
+validation-only 0.4 wins 7 uncertain 11
+val E thr=0.5 pubmed_validation_776 tier=uncertain sim=0.078 trunc=0
+val E thr=0.5 pubmed_validation_507 tier=uncertain sim=0.100 trunc=0
+val E thr=0.5 pubmed_validation_895 tier=uncertain sim=0.133 trunc=0
+val E thr=0.5 pubmed_validation_922 tier=accept sim=0.497 trunc=0
+val E thr=0.5 pubmed_validation_33 tier=uncertain sim=0.094 trunc=0
+val E thr=0.5 pubmed_validation_483 tier=corrected sim=0.642 trunc=0
+val E thr=0.5 pubmed_validation_85 tier=uncertain sim=0.085 trunc=0
+val E thr=0.5 pubmed_validation_750 tier=uncertain sim=0.051 trunc=0
+val E thr=0.5 pubmed_validation_354 tier=uncertain sim=0.059 trunc=0
+val E thr=0.5 pubmed_validation_523 tier=uncertain sim=0.052 trunc=0
+val E thr=0.5 healthcaremagic_validation_84919 tier=uncertain sim=0.013 trunc=0
+val E thr=0.5 healthcaremagic_validation_63861 tier=uncertain sim=0.000 trunc=0
+val E thr=0.5 healthcaremagic_validation_68992 tier=uncertain sim=0.011 trunc=0
+val E thr=0.5 healthcaremagic_validation_37810 tier=uncertain sim=0.000 trunc=0
+val E thr=0.5 healthcaremagic_validation_89911 tier=accept sim=0.525 trunc=0
+val E thr=0.5 healthcaremagic_validation_50243 tier=uncertain sim=0.000 trunc=0
+val E thr=0.5 healthcaremagic_validation_33320 tier=corrected sim=0.672 trunc=0
+val E thr=0.5 healthcaremagic_validation_25600 tier=corrected sim=0.672 trunc=0
+val E thr=0.5 healthcaremagic_validation_94946 tier=uncertain sim=0.007 trunc=0
+val E thr=0.5 healthcaremagic_validation_87201 tier=uncertain sim=0.052 trunc=0
+validation-only 0.5 wins 4 uncertain 15
+val E thr=0.6 pubmed_validation_776 tier=uncertain sim=0.078 trunc=0
+val E thr=0.6 pubmed_validation_507 tier=uncertain sim=0.100 trunc=0
+val E thr=0.6 pubmed_validation_895 tier=uncertain sim=0.133 trunc=0
+val E thr=0.6 pubmed_validation_922 tier=accept sim=0.497 trunc=0
+val E thr=0.6 pubmed_validation_33 tier=uncertain sim=0.094 trunc=0
+val E thr=0.6 pubmed_validation_483 tier=uncertain sim=0.082 trunc=0
+val E thr=0.6 pubmed_validation_85 tier=uncertain sim=0.085 trunc=0
+val E thr=0.6 pubmed_validation_750 tier=uncertain sim=0.051 trunc=0
+val E thr=0.6 pubmed_validation_354 tier=uncertain sim=0.059 trunc=0
+val E thr=0.6 pubmed_validation_523 tier=uncertain sim=0.052 trunc=0
+val E thr=0.6 healthcaremagic_validation_84919 tier=uncertain sim=0.013 trunc=0
+val E thr=0.6 healthcaremagic_validation_63861 tier=uncertain sim=0.000 trunc=0
+val E thr=0.6 healthcaremagic_validation_68992 tier=uncertain sim=0.011 trunc=0
+val E thr=0.6 healthcaremagic_validation_37810 tier=uncertain sim=0.000 trunc=0
+val E thr=0.6 healthcaremagic_validation_89911 tier=corrected sim=0.763 trunc=0
+val E thr=0.6 healthcaremagic_validation_50243 tier=uncertain sim=0.000 trunc=0
+val E thr=0.6 healthcaremagic_validation_33320 tier=uncertain sim=0.000 trunc=0
+val E thr=0.6 healthcaremagic_validation_25600 tier=corrected sim=0.672 trunc=0
+val E thr=0.6 healthcaremagic_validation_94946 tier=uncertain sim=0.007 trunc=0
+val E thr=0.6 healthcaremagic_validation_87201 tier=uncertain sim=0.052 trunc=0
+validation-only 0.6 wins 2 uncertain 17
+val E thr=0.7 pubmed_validation_776 tier=uncertain sim=0.078 trunc=0
+val E thr=0.7 pubmed_validation_507 tier=uncertain sim=0.100 trunc=0
+val E thr=0.7 pubmed_validation_895 tier=uncertain sim=0.133 trunc=0
+val E thr=0.7 pubmed_validation_922 tier=uncertain sim=0.101 trunc=0
+val E thr=0.7 pubmed_validation_33 tier=uncertain sim=0.094 trunc=0
+val E thr=0.7 pubmed_validation_483 tier=uncertain sim=0.082 trunc=0
+val E thr=0.7 pubmed_validation_85 tier=uncertain sim=0.085 trunc=0
+val E thr=0.7 pubmed_validation_750 tier=uncertain sim=0.051 trunc=0
+val E thr=0.7 pubmed_validation_354 tier=uncertain sim=0.059 trunc=0
+val E thr=0.7 pubmed_validation_523 tier=uncertain sim=0.052 trunc=0
+val E thr=0.7 healthcaremagic_validation_84919 tier=uncertain sim=0.013 trunc=0
+val E thr=0.7 healthcaremagic_validation_63861 tier=uncertain sim=0.000 trunc=0
+val E thr=0.7 healthcaremagic_validation_68992 tier=uncertain sim=0.011 trunc=0
+val E thr=0.7 healthcaremagic_validation_37810 tier=uncertain sim=0.000 trunc=0
+val E thr=0.7 healthcaremagic_validation_89911 tier=uncertain sim=0.003 trunc=0
+val E thr=0.7 healthcaremagic_validation_50243 tier=uncertain sim=0.000 trunc=0
+val E thr=0.7 healthcaremagic_validation_33320 tier=uncertain sim=0.000 trunc=0
+val E thr=0.7 healthcaremagic_validation_25600 tier=uncertain sim=0.000 trunc=0
+val E thr=0.7 healthcaremagic_validation_94946 tier=uncertain sim=0.007 trunc=0
+val E thr=0.7 healthcaremagic_validation_87201 tier=uncertain sim=0.052 trunc=0
+validation-only 0.7 wins 0 uncertain 20
+Chosen verify cutoff from validation only: 0.3
+val E-nov pubmed_validation_776 sim=0.717
+val E-nov pubmed_validation_507 sim=0.574
+val E-nov pubmed_validation_895 sim=0.514
+val E-nov pubmed_validation_922 sim=0.462
+val E-nov pubmed_validation_33 sim=0.758
+val E-nov pubmed_validation_483 sim=0.400
+val E-nov pubmed_validation_85 sim=0.677
+val E-nov pubmed_validation_750 sim=0.415
+val E-nov pubmed_validation_354 sim=0.259
+val E-nov pubmed_validation_523 sim=0.492
+val E-nov healthcaremagic_validation_84919 sim=0.162
+val E-nov healthcaremagic_validation_63861 sim=0.196
+val E-nov healthcaremagic_validation_68992 sim=0.727
+val E-nov healthcaremagic_validation_37810 sim=0.177
+val E-nov healthcaremagic_validation_89911 sim=0.760
+val E-nov healthcaremagic_validation_50243 sim=0.320
+val E-nov healthcaremagic_validation_33320 sim=0.687
+val E-nov healthcaremagic_validation_25600 sim=0.672
+val E-nov healthcaremagic_validation_94946 sim=0.687
+val E-nov healthcaremagic_validation_87201 sim=0.607
+Test split starts after the cutoff was chosen.
+test E pubmed_test_184 tier=accept sim=0.500
+test E-nov pubmed_test_184 sim=0.500
+test E pubmed_test_809 tier=uncertain sim=0.068
+test E-nov pubmed_test_809 sim=0.465
+test E pubmed_test_418 tier=accept sim=0.817
+test E-nov pubmed_test_418 sim=0.817
+test E pubmed_test_615 tier=accept sim=0.712
+test E-nov pubmed_test_615 sim=0.712
+test E pubmed_test_682 tier=corrected sim=0.438
+test E-nov pubmed_test_682 sim=0.438
+test E pubmed_test_501 tier=accept sim=0.605
+test E-nov pubmed_test_501 sim=0.693
+test E pubmed_test_760 tier=accept sim=0.360
+test E-nov pubmed_test_760 sim=0.358
+test E pubmed_test_49 tier=accept sim=0.452
+test E-nov pubmed_test_49 sim=0.440
+test E pubmed_test_732 tier=accept sim=0.576
+test E-nov pubmed_test_732 sim=0.576
+test E pubmed_test_336 tier=uncertain sim=0.008
+test E-nov pubmed_test_336 sim=0.445
+test E healthcaremagic_test_44108 tier=accept sim=0.470
+test E-nov healthcaremagic_test_44108 sim=0.470
+test E healthcaremagic_test_2675 tier=uncertain sim=0.000
+test E-nov healthcaremagic_test_2675 sim=0.218
+test E healthcaremagic_test_34601 tier=accept sim=0.416
+test E-nov healthcaremagic_test_34601 sim=0.357
+test E healthcaremagic_test_106854 tier=uncertain sim=0.000
+test E-nov healthcaremagic_test_106854 sim=0.085
+test E healthcaremagic_test_67517 tier=corrected sim=0.156
+test E-nov healthcaremagic_test_67517 sim=0.156
+test E healthcaremagic_test_3960 tier=accept sim=0.781
+test E-nov healthcaremagic_test_3960 sim=0.039
+test E healthcaremagic_test_42340 tier=corrected sim=0.655
+test E-nov healthcaremagic_test_42340 sim=0.655
+test E healthcaremagic_test_101817 tier=uncertain sim=0.000
+test E-nov healthcaremagic_test_101817 sim=0.402
+test E healthcaremagic_test_22814 tier=uncertain sim=0.096
+test E-nov healthcaremagic_test_22814 sim=0.423
+test E healthcaremagic_test_55667 tier=accept sim=0.618
+test E-nov healthcaremagic_test_55667 sim=0.572
+{
+  "configurations_run": [
+    "E",
+    "E-nov"
+  ],
+  "context_cap": "E and E-nov shorten retrieved context until the full prompt is within 512 tokens. A-D still use the 2000-character context and can truncate.",
+  "selection_rule": "On validation only, choose the grid value with the most similarity wins. Uncertainty statements are never wins. Denominator is all validation questions. Ties keep the larger cutoff. Test scores are not used.",
+  "verify_grid": [
+    0.3,
+    0.4,
+    0.5,
+    0.6,
+    0.7
+  ],
+  "validation_grid_results": [
+    {
+      "threshold": 0.3,
+      "validation": {
+        "n": 20,
+        "tier_counts": {
+          "accept": 9,
+          "corrected": 8,
+          "uncertain": 3
+        },
+        "uncertain_count": 3,
+        "similarity_pass_count_uncertainty_not_a_win": 10,
+        "similarity_pass_rate_including_uncertainty_in_denominator": 0.5,
+        "n_excluding_uncertainty": 17,
+        "similarity_pass_count_excluding_uncertainty": 10,
+        "similarity_pass_rate_excluding_uncertainty": 0.5882352941176471,
+        "mean_similarity_to_reference_all": 0.4496445428580046,
+        "mean_similarity_to_reference_excluding_uncertainty": 0.5209287571556428,
+        "mean_latency_seconds": 1.634164178449987,
+        "truncated_generations": 0,
+        "fallback_used_count": 0,
+        "fallback_suppressed_count": 2
+      }
+    },
+    {
+      "threshold": 0.4,
+      "validation": {
+        "n": 20,
+        "tier_counts": {
+          "uncertain": 11,
+          "corrected": 4,
+          "accept": 5
+        },
+        "uncertain_count": 11,
+        "similarity_pass_count_uncertainty_not_a_win": 7,
+        "similarity_pass_rate_including_uncertainty_in_denominator": 0.35,
+        "n_excluding_uncertainty": 9,
+        "similarity_pass_count_excluding_uncertainty": 7,
+        "similarity_pass_rate_excluding_uncertainty": 0.7777777777777778,
+        "mean_similarity_to_reference_all": 0.2884494307683781,
+        "mean_similarity_to_reference_excluding_uncertainty": 0.5775337053669823,
+        "mean_latency_seconds": 2.0352554170999837,
+        "truncated_generations": 0,
+        "fallback_used_count": 0,
+        "fallback_suppressed_count": 2
+      }
+    },
+    {
+      "threshold": 0.5,
+      "validation": {
+        "n": 20,
+        "tier_counts": {
+          "uncertain": 15,
+          "accept": 2,
+          "corrected": 3
+        },
+        "uncertain_count": 15,
+        "similarity_pass_count_uncertainty_not_a_win": 4,
+        "similarity_pass_rate_including_uncertainty_in_denominator": 0.2,
+        "n_excluding_uncertainty": 5,
+        "similarity_pass_count_excluding_uncertainty": 4,
+        "similarity_pass_rate_excluding_uncertainty": 0.8,
+        "mean_similarity_to_reference_all": 0.1871319826459512,
+        "mean_similarity_to_reference_excluding_uncertainty": 0.6017560124397278,
+        "mean_latency_seconds": 2.4000375257999393,
+        "truncated_generations": 0,
+        "fallback_used_count": 0,
+        "fallback_suppressed_count": 2
+      }
+    },
+    {
+      "threshold": 0.6,
+      "validation": {
+        "n": 20,
+        "tier_counts": {
+          "uncertain": 17,
+          "accept": 1,
+          "corrected": 2
+        },
+        "uncertain_count": 17,
+        "similarity_pass_count_uncertainty_not_a_win": 2,
+        "similarity_pass_rate_including_uncertainty_in_denominator": 0.1,
+        "n_excluding_uncertainty": 3,
+        "similarity_pass_count_excluding_uncertainty": 2,
+        "similarity_pass_rate_excluding_uncertainty": 0.6666666666666666,
+        "mean_similarity_to_reference_all": 0.13741466549690812,
+        "mean_similarity_to_reference_excluding_uncertainty": 0.6441207528114319,
+        "mean_latency_seconds": 2.508019734699997,
+        "truncated_generations": 0,
+        "fallback_used_count": 0,
+        "fallback_suppressed_count": 2
+      }
+    },
+    {
+      "threshold": 0.7,
+      "validation": {
+        "n": 20,
+        "tier_counts": {
+          "uncertain": 20
+        },
+        "uncertain_count": 20,
+        "similarity_pass_count_uncertainty_not_a_win": 0,
+        "similarity_pass_rate_including_uncertainty_in_denominator": 0.0,
+        "n_excluding_uncertainty": 0,
+        "similarity_pass_count_excluding_uncertainty": 0,
+        "similarity_pass_rate_excluding_uncertainty": null,
+        "mean_similarity_to_reference_all": 0.04601837269729003,
+        "mean_similarity_to_reference_excluding_uncertainty": null,
+        "mean_latency_seconds": 2.6607948991000057,
+        "truncated_generations": 0,
+        "fallback_used_count": 0,
+        "fallback_suppressed_count": 2
+      }
+    }
+  ],
+  "chosen_verify_threshold": 0.3,
+  "models": {
+    "student": "google/flan-t5-small",
+    "teacher": "google/flan-t5-base",
+    "embedder": "all-MiniLM-L6-v2"
+  },
+  "similarity_pass_cutoff": 0.52,
+  "note": "similarity pass rate is cosine similarity to the reference text above 0.52. It is not factual accuracy. Uncertainty statements are never counted as wins.",
+  "split": {
+    "seed": 42,
+    "val_size": 20,
+    "test_size": 20,
+    "duplicates_removed": {
+      "pubmed": 0,
+      "healthcaremagic": 16
+    },
+    "n_validation": 20,
+    "n_test": 20,
+    "n_knowledge": 300,
+    "leakage_count": 0,
+    "split_difference": "Original main.py split is unshuffled and has no validation set: knowledge base indices 0-149 and test indices 150-159 within each source. This split shuffles with the configured seed, holds out val_size validation questions and test_size test questions (each split evenly across the two sources), and excludes those questions from the knowledge base."
+  },
+  "results": {
+    "E_validation_chosen_cutoff": {
+      "all": {
+        "n": 20,
+        "tier_counts": {
+          "accept": 9,
+          "corrected": 8,
+          "uncertain": 3
+        },
+        "uncertain_count": 3,
+        "similarity_pass_count_uncertainty_not_a_win": 10,
+        "similarity_pass_rate_including_uncertainty_in_denominator": 0.5,
+        "n_excluding_uncertainty": 17,
+        "similarity_pass_count_excluding_uncertainty": 10,
+        "similarity_pass_rate_excluding_uncertainty": 0.5882352941176471,
+        "mean_similarity_to_reference_all": 0.4496445428580046,
+        "mean_similarity_to_reference_excluding_uncertainty": 0.5209287571556428,
+        "mean_latency_seconds": 1.634164178449987,
+        "truncated_generations": 0,
+        "fallback_used_count": 0,
+        "fallback_suppressed_count": 2
+      },
+      "pubmed": {
+        "n": 10,
+        "tier_counts": {
+          "accept": 5,
+          "corrected": 3,
+          "uncertain": 2
+        },
+        "uncertain_count": 2,
+        "similarity_pass_count_uncertainty_not_a_win": 4,
+        "similarity_pass_rate_including_uncertainty_in_denominator": 0.4,
+        "n_excluding_uncertainty": 8,
+        "similarity_pass_count_excluding_uncertainty": 4,
+        "similarity_pass_rate_excluding_uncertainty": 0.5,
+        "mean_similarity_to_reference_all": 0.4470915041863918,
+        "mean_similarity_to_reference_excluding_uncertainty": 0.5417266320437193,
+        "mean_latency_seconds": 1.0839386590999767,
+        "truncated_generations": 0,
+        "fallback_used_count": 0,
+        "fallback_suppressed_count": 1
+      },
+      "healthcaremagic": {
+        "n": 10,
+        "tier_counts": {
+          "corrected": 5,
+          "accept": 4,
+          "uncertain": 1
+        },
+        "uncertain_count": 1,
+        "similarity_pass_count_uncertainty_not_a_win": 6,
+        "similarity_pass_rate_including_uncertainty_in_denominator": 0.6,
+        "n_excluding_uncertainty": 9,
+        "similarity_pass_count_excluding_uncertainty": 6,
+        "similarity_pass_rate_excluding_uncertainty": 0.6666666666666666,
+        "mean_similarity_to_reference_all": 0.4521975815296173,
+        "mean_similarity_to_reference_excluding_uncertainty": 0.5024417572551303,
+        "mean_latency_seconds": 2.1843896977999977,
+        "truncated_generations": 0,
+        "fallback_used_count": 0,
+        "fallback_suppressed_count": 1
+      }
+    },
+    "E_test": {
+      "all": {
+        "n": 20,
+        "tier_counts": {
+          "accept": 11,
+          "uncertain": 6,
+          "corrected": 3
+        },
+        "uncertain_count": 6,
+        "similarity_pass_count_uncertainty_not_a_win": 7,
+        "similarity_pass_rate_including_uncertainty_in_denominator": 0.35,
+        "n_excluding_uncertainty": 14,
+        "similarity_pass_count_excluding_uncertainty": 7,
+        "similarity_pass_rate_excluding_uncertainty": 0.5,
+        "mean_similarity_to_reference_all": 0.3864597076550126,
+        "mean_similarity_to_reference_excluding_uncertainty": 0.5397784656711987,
+        "mean_latency_seconds": 1.8387542861000157,
+        "truncated_generations": 0,
+        "fallback_used_count": 0,
+        "fallback_suppressed_count": 0
+      },
+      "pubmed": {
+        "n": 10,
+        "tier_counts": {
+          "accept": 7,
+          "uncertain": 2,
+          "corrected": 1
+        },
+        "uncertain_count": 2,
+        "similarity_pass_count_uncertainty_not_a_win": 4,
+        "similarity_pass_rate_including_uncertainty_in_denominator": 0.4,
+        "n_excluding_uncertainty": 8,
+        "similarity_pass_count_excluding_uncertainty": 4,
+        "similarity_pass_rate_excluding_uncertainty": 0.5,
+        "mean_similarity_to_reference_all": 0.4536995943635702,
+        "mean_similarity_to_reference_excluding_uncertainty": 0.5576225109398365,
+        "mean_latency_seconds": 0.9758038867000323,
+        "truncated_generations": 0,
+        "fallback_used_count": 0,
+        "fallback_suppressed_count": 0
+      },
+      "healthcaremagic": {
+        "n": 10,
+        "tier_counts": {
+          "accept": 4,
+          "uncertain": 4,
+          "corrected": 2
+        },
+        "uncertain_count": 4,
+        "similarity_pass_count_uncertainty_not_a_win": 3,
+        "similarity_pass_rate_including_uncertainty_in_denominator": 0.3,
+        "n_excluding_uncertainty": 6,
+        "similarity_pass_count_excluding_uncertainty": 3,
+        "similarity_pass_rate_excluding_uncertainty": 0.5,
+        "mean_similarity_to_reference_all": 0.319219820946455,
+        "mean_similarity_to_reference_excluding_uncertainty": 0.515986405313015,
+        "mean_latency_seconds": 2.701704685499999,
+        "truncated_generations": 0,
+        "fallback_used_count": 0,
+        "fallback_suppressed_count": 0
+      }
+    },
+    "E-nov_validation": {
+      "all": {
+        "n": 20,
+        "tier_counts": {
+          "Moderate confidence \u2192 Preferred Teacher": 6,
+          "Low confidence \u2192 Blended Student + Teacher": 6,
+          "High confidence \u2192 Student answer accepted": 4,
+          "Hallucination detected \u2192 Replaced with Teacher": 4
+        },
+        "uncertain_count": 0,
+        "similarity_pass_count_uncertainty_not_a_win": 10,
+        "similarity_pass_rate_including_uncertainty_in_denominator": 0.5,
+        "n_excluding_uncertainty": 20,
+        "similarity_pass_count_excluding_uncertainty": 10,
+        "similarity_pass_rate_excluding_uncertainty": 0.5,
+        "mean_similarity_to_reference_all": 0.5131128825247288,
+        "mean_similarity_to_reference_excluding_uncertainty": 0.5131128825247288,
+        "mean_latency_seconds": 2.6238002310000637,
+        "truncated_generations": 0,
+        "fallback_used_count": 2,
+        "fallback_suppressed_count": 0
+      },
+      "pubmed": {
+        "n": 10,
+        "tier_counts": {
+          "Moderate confidence \u2192 Preferred Teacher": 4,
+          "Low confidence \u2192 Blended Student + Teacher": 3,
+          "High confidence \u2192 Student answer accepted": 1,
+          "Hallucination detected \u2192 Replaced with Teacher": 2
+        },
+        "uncertain_count": 0,
+        "similarity_pass_count_uncertainty_not_a_win": 4,
+        "similarity_pass_rate_including_uncertainty_in_denominator": 0.4,
+        "n_excluding_uncertainty": 10,
+        "similarity_pass_count_excluding_uncertainty": 4,
+        "similarity_pass_rate_excluding_uncertainty": 0.4,
+        "mean_similarity_to_reference_all": 0.5267453968524933,
+        "mean_similarity_to_reference_excluding_uncertainty": 0.5267453968524933,
+        "mean_latency_seconds": 2.256877982700098,
+        "truncated_generations": 0,
+        "fallback_used_count": 1,
+        "fallback_suppressed_count": 0
+      },
+      "healthcaremagic": {
+        "n": 10,
+        "tier_counts": {
+          "Low confidence \u2192 Blended Student + Teacher": 3,
+          "Hallucination detected \u2192 Replaced with Teacher": 2,
+          "High confidence \u2192 Student answer accepted": 3,
+          "Moderate confidence \u2192 Preferred Teacher": 2
+        },
+        "uncertain_count": 0,
+        "similarity_pass_count_uncertainty_not_a_win": 6,
+        "similarity_pass_rate_including_uncertainty_in_denominator": 0.6,
+        "n_excluding_uncertainty": 10,
+        "similarity_pass_count_excluding_uncertainty": 6,
+        "similarity_pass_rate_excluding_uncertainty": 0.6,
+        "mean_similarity_to_reference_all": 0.4994803681969643,
+        "mean_similarity_to_reference_excluding_uncertainty": 0.4994803681969643,
+        "mean_latency_seconds": 2.9907224793000298,
+        "truncated_generations": 0,
+        "fallback_used_count": 1,
+        "fallback_suppressed_count": 0
+      }
+    },
+    "E-nov_test": {
+      "all": {
+        "n": 20,
+        "tier_counts": {
+          "High confidence \u2192 Student answer accepted": 7,
+          "Hallucination detected \u2192 Replaced with Teacher": 7,
+          "Moderate confidence \u2192 Preferred Teacher": 3,
+          "Low confidence \u2192 Blended Student + Teacher": 3
+        },
+        "uncertain_count": 0,
+        "similarity_pass_count_uncertainty_not_a_win": 6,
+        "similarity_pass_rate_including_uncertainty_in_denominator": 0.3,
+        "n_excluding_uncertainty": 20,
+        "similarity_pass_count_excluding_uncertainty": 6,
+        "similarity_pass_rate_excluding_uncertainty": 0.3,
+        "mean_similarity_to_reference_all": 0.4410132380202413,
+        "mean_similarity_to_reference_excluding_uncertainty": 0.4410132380202413,
+        "mean_latency_seconds": 3.160790382049936,
+        "truncated_generations": 0,
+        "fallback_used_count": 0,
+        "fallback_suppressed_count": 0
+      },
+      "pubmed": {
+        "n": 10,
+        "tier_counts": {
+          "High confidence \u2192 Student answer accepted": 4,
+          "Hallucination detected \u2192 Replaced with Teacher": 2,
+          "Moderate confidence \u2192 Preferred Teacher": 2,
+          "Low confidence \u2192 Blended Student + Teacher": 2
+        },
+        "uncertain_count": 0,
+        "similarity_pass_count_uncertainty_not_a_win": 4,
+        "similarity_pass_rate_including_uncertainty_in_denominator": 0.4,
+        "n_excluding_uncertainty": 10,
+        "similarity_pass_count_excluding_uncertainty": 4,
+        "similarity_pass_rate_excluding_uncertainty": 0.4,
+        "mean_similarity_to_reference_all": 0.5443637639284133,
+        "mean_similarity_to_reference_excluding_uncertainty": 0.5443637639284133,
+        "mean_latency_seconds": 2.3497809325999244,
+        "truncated_generations": 0,
+        "fallback_used_count": 0,
+        "fallback_suppressed_count": 0
+      },
+      "healthcaremagic": {
+        "n": 10,
+        "tier_counts": {
+          "High confidence \u2192 Student answer accepted": 3,
+          "Hallucination detected \u2192 Replaced with Teacher": 5,
+          "Moderate confidence \u2192 Preferred Teacher": 1,
+          "Low confidence \u2192 Blended Student + Teacher": 1
+        },
+        "uncertain_count": 0,
+        "similarity_pass_count_uncertainty_not_a_win": 2,
+        "similarity_pass_rate_including_uncertainty_in_denominator": 0.2,
+        "n_excluding_uncertainty": 10,
+        "similarity_pass_count_excluding_uncertainty": 2,
+        "similarity_pass_rate_excluding_uncertainty": 0.2,
+        "mean_similarity_to_reference_all": 0.3376627121120691,
+        "mean_similarity_to_reference_excluding_uncertainty": 0.3376627121120691,
+        "mean_latency_seconds": 3.971799831499948,
+        "truncated_generations": 0,
+        "fallback_used_count": 0,
+        "fallback_suppressed_count": 0
+      }
+    }
+  }
+}

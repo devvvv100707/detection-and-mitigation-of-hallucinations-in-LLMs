@@ -390,14 +390,224 @@ def run_configurations_ad(val_size=20, test_size=20, seed=42):
     return metrics
 
 
+UNCERTAIN_TEXT = "The available evidence is insufficient to answer this reliably."
+
+
+def _e_row(item, result, similarity, latency, threshold):
+    uncertain = result["tier"] == "uncertain" or result["final_answer"] == UNCERTAIN_TEXT
+    cutoff = 0.52
+    similarity_win = (not uncertain) and similarity > cutoff
+    return {
+        "question_id": item["question_id"],
+        "split": item["split"],
+        "dataset": item["source"],
+        "row_index": item["row_index"],
+        "configuration": result["configuration"],
+        "verify_threshold": threshold if result["configuration"] == "E" else "",
+        "student_answer": result["student_answer"],
+        "teacher_answer": result["teacher_answer"],
+        "student_verification": result["student_verification"],
+        "teacher_verification": result["teacher_verification"],
+        "student_support_similarity": result["student_support_similarity"],
+        "teacher_support_similarity": result["teacher_support_similarity"],
+        "tier": result["tier"],
+        "answer": result["final_answer"],
+        "similarity_to_reference": similarity,
+        "similarity_win_excluding_uncertainty": similarity_win,
+        "uncertain": uncertain,
+        "fallback_used": result["fallback_used"],
+        "fallback_suppressed": result["fallback_suppressed"],
+        "prompt_truncated": result["prompt_truncated"],
+        "truncated_generations": result["truncated_generations"],
+        "prompt_tokens": result["prompt_tokens"],
+        "latency_seconds": latency,
+    }
+
+
+def _summarize_e(rows):
+    def pack(subset):
+        if not subset:
+            return {"n": 0}
+        wins = [row for row in subset if row["similarity_win_excluding_uncertainty"]]
+        uncertain = [row for row in subset if row["uncertain"]]
+        answered = [row for row in subset if not row["uncertain"]]
+        tiers = {}
+        for row in subset:
+            tiers[row["tier"]] = tiers.get(row["tier"], 0) + 1
+        return {
+            "n": len(subset),
+            "tier_counts": tiers,
+            "uncertain_count": len(uncertain),
+            "similarity_pass_count_uncertainty_not_a_win": len(wins),
+            "similarity_pass_rate_including_uncertainty_in_denominator": len(wins) / len(subset),
+            "n_excluding_uncertainty": len(answered),
+            "similarity_pass_count_excluding_uncertainty": len(wins),
+            "similarity_pass_rate_excluding_uncertainty": (len(wins) / len(answered) if answered else None),
+            "mean_similarity_to_reference_all": float(np.mean([row["similarity_to_reference"] for row in subset])),
+            "mean_similarity_to_reference_excluding_uncertainty": (
+                float(np.mean([row["similarity_to_reference"] for row in answered])) if answered else None
+            ),
+            "mean_latency_seconds": float(np.mean([row["latency_seconds"] for row in subset])),
+            "truncated_generations": int(sum(int(row["truncated_generations"]) for row in subset)),
+            "fallback_used_count": int(sum(bool(row["fallback_used"]) for row in subset)),
+            "fallback_suppressed_count": int(sum(bool(row["fallback_suppressed"]) for row in subset)),
+        }
+
+    summary = {}
+    for dataset in ("all", "pubmed", "healthcaremagic"):
+        if dataset == "all":
+            chosen = rows
+        else:
+            chosen = [row for row in rows if row["dataset"] == dataset]
+        summary[dataset] = pack(chosen)
+    return summary
+
+
+def run_configuration_e(val_size=20, test_size=20, seed=42):
+    """Choose the verify cutoff on validation, then run E and E-nov once on test.
+
+    Selection rule, fixed before any test score is computed: on the validation
+    split, pick the grid value with the most similarity wins. An uncertainty
+    statement is never a win. The denominator is every validation question.
+    If two cutoffs tie, keep the larger cutoff.
+    """
+    config = PipelineConfig(mode="baseline", val_size=val_size, test_size=test_size, seed=seed)
+    grid = list(config.verify_grid)
+    if len(grid) > 5:
+        raise ValueError("verify grid must contain at most 5 values")
+    knowledge_data, questions, split_meta = build_experiment_splits(config)
+    validation = [item for item in questions if item["split"] == "validation"]
+    test = [item for item in questions if item["split"] == "test"]
+    pipe = BaselinePipeline(config, knowledge_data)
+    rows = []
+
+    print("Validation grid. Test questions are not scored in this loop.")
+    print("Grid:", grid)
+    grid_summary = []
+    for threshold in grid:
+        threshold_rows = []
+        for item in validation:
+            started = time.perf_counter()
+            result = pipe.run_e(item["question"], item["source"], threshold=threshold)
+            latency = time.perf_counter() - started
+            similarity = pipe.similarity_score(result["final_answer"], item["true_answer"])
+            row = _e_row(item, result, similarity, latency, threshold)
+            threshold_rows.append(row)
+            rows.append(row)
+            print(
+                f"val E thr={threshold} {item['question_id']} tier={result['tier']} "
+                f"sim={similarity:.3f} trunc={result['truncated_generations']}"
+            )
+        summary = _summarize_e(threshold_rows)["all"]
+        grid_summary.append({
+            "threshold": threshold,
+            "validation": summary,
+        })
+        print(
+            "validation-only",
+            threshold,
+            "wins",
+            summary["similarity_pass_count_uncertainty_not_a_win"],
+            "uncertain",
+            summary["uncertain_count"],
+        )
+
+    def sort_key(entry):
+        stats = entry["validation"]
+        return (stats["similarity_pass_count_uncertainty_not_a_win"], entry["threshold"])
+
+    chosen = max(grid_summary, key=sort_key)
+    chosen_threshold = chosen["threshold"]
+    print(f"Chosen verify cutoff from validation only: {chosen_threshold}")
+
+    for item in validation:
+        started = time.perf_counter()
+        result = pipe.run_enov(item["question"], item["source"])
+        latency = time.perf_counter() - started
+        similarity = pipe.similarity_score(result["final_answer"], item["true_answer"])
+        rows.append(_e_row(item, result, similarity, latency, ""))
+        print(f"val E-nov {item['question_id']} sim={similarity:.3f}")
+
+    print("Test split starts after the cutoff was chosen.")
+    for item in test:
+        started = time.perf_counter()
+        result = pipe.run_e(item["question"], item["source"], threshold=chosen_threshold)
+        latency = time.perf_counter() - started
+        similarity = pipe.similarity_score(result["final_answer"], item["true_answer"])
+        rows.append(_e_row(item, result, similarity, latency, chosen_threshold))
+        print(f"test E {item['question_id']} tier={result['tier']} sim={similarity:.3f}")
+
+        started = time.perf_counter()
+        result = pipe.run_enov(item["question"], item["source"])
+        latency = time.perf_counter() - started
+        similarity = pipe.similarity_score(result["final_answer"], item["true_answer"])
+        rows.append(_e_row(item, result, similarity, latency, ""))
+        print(f"test E-nov {item['question_id']} sim={similarity:.3f}")
+
+    def subset(configuration, split_name, threshold=None):
+        selected = [
+            row for row in rows
+            if row["configuration"] == configuration and row["split"] == split_name
+        ]
+        if threshold is not None:
+            selected = [row for row in selected if float(row["verify_threshold"]) == float(threshold)]
+        return selected
+
+    metrics = {
+        "configurations_run": ["E", "E-nov"],
+        "context_cap": (
+            "E and E-nov shorten retrieved context until the full prompt is within "
+            "512 tokens. A-D still use the 2000-character context and can truncate."
+        ),
+        "selection_rule": (
+            "On validation only, choose the grid value with the most similarity wins. "
+            "Uncertainty statements are never wins. Denominator is all validation questions. "
+            "Ties keep the larger cutoff. Test scores are not used."
+        ),
+        "verify_grid": grid,
+        "validation_grid_results": grid_summary,
+        "chosen_verify_threshold": chosen_threshold,
+        "models": {
+            "student": config.student_model_name,
+            "teacher": config.teacher_model_name,
+            "embedder": config.embedder_name,
+        },
+        "similarity_pass_cutoff": 0.52,
+        "note": (
+            "similarity pass rate is cosine similarity to the reference text above 0.52. "
+            "It is not factual accuracy. Uncertainty statements are never counted as wins."
+        ),
+        "split": split_meta,
+        "results": {
+            "E_validation_chosen_cutoff": _summarize_e(subset("E", "validation", chosen_threshold)),
+            "E_test": _summarize_e(subset("E", "test", chosen_threshold)),
+            "E-nov_validation": _summarize_e(subset("E-nov", "validation")),
+            "E-nov_test": _summarize_e(subset("E-nov", "test")),
+        },
+    }
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    pred_path = OUTPUT_DIR / f"e_val{val_size}_test{test_size}_predictions.csv"
+    metrics_path = OUTPUT_DIR / f"e_val{val_size}_test{test_size}_metrics.json"
+    with pred_path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(rows[0].keys()))
+        writer.writeheader()
+        writer.writerows(rows)
+    metrics_path.write_text(json.dumps(metrics, indent=2), encoding="utf-8")
+    print(json.dumps(metrics, indent=2))
+    return metrics
+
+
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("--configs-ad", action="store_true")
+    parser.add_argument("--config-e", action="store_true")
     parser.add_argument("--val-size", type=int, default=20)
     parser.add_argument("--test-size", type=int, default=20)
     args = parser.parse_args()
-    if args.configs_ad:
+    if args.config_e:
+        run_configuration_e(val_size=args.val_size, test_size=args.test_size)
+    elif args.configs_ad:
         run_configurations_ad(val_size=args.val_size, test_size=args.test_size)
     else:
         evaluate()

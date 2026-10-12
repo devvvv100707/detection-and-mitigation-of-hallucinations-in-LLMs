@@ -94,6 +94,16 @@ cd frontend && npm run dev
 
 Vite proxies `/api` to port 8000. Open `http://127.0.0.1:5173`.
 
+Screenshots of the interface, at 1280px and 390px, are in `docs/screenshots/`:
+
+- Home before a question: `home-empty-1280.png`, `home-empty-390.png`
+- Home while a request is running: `home-loading-1280.png`, `home-loading-390.png`
+- Accepted, revised, and uncertainty results: `home-accepted-*.png`, `home-revised-*.png`, `home-uncertain-*.png`
+- Failed request: `home-error-*.png`
+- Comparison modal: `modal-*.png`
+- Research Results: `research-validation-*.png`, `research-test-*.png`
+- About: `about-*.png`
+
 `python3 scripts/smoke_test.py` checks the live API. The first request waits until the models finish loading.
 
 ## API

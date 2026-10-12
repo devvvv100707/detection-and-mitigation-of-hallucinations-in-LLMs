@@ -7,6 +7,7 @@ branches. Improved mitigation is not implemented here.
 from dataclasses import dataclass
 import random
 import re
+import time
 
 from datasets import load_dataset
 from sentence_transformers import SentenceTransformer, util
@@ -333,29 +334,62 @@ class BaselinePipeline:
             "prompt_tokens": max(student["prompt_tokens"], teacher["prompt_tokens"]),
         }
 
+    def top_evidence(self, query):
+        """Highest-scoring knowledge-base row for a question, including its score."""
+        if not self.knowledge_data:
+            return None
+        q_emb = self.embedder.encode(query, convert_to_tensor=True)
+        scores = util.cos_sim(q_emb, self.kb_embeddings)[0]
+        score, idx = torch.topk(scores, k=1)
+        entry = self.knowledge_data[int(idx[0])]
+        text = (
+            f"[{entry['source'].upper()}] "
+            f"Q: {entry['question']}\n"
+            f"Context: {entry['context'][:300]}\n"
+            f"A: {entry['answer']}"
+        )
+        return {
+            "text": text,
+            "source": entry["source"],
+            "similarity": float(score[0]),
+            "included": float(score[0]) > self.config.retrieval_min_score,
+        }
+
     def run_e(self, query, source_hint="general", threshold=0.50):
         """Accept a supported student answer, else a supported teacher answer, else abstain."""
         from verify import SUPPORTED, verify_support
 
+        started = time.perf_counter()
         context = self.retrieve_context(query)
+        retrieve_seconds = time.perf_counter() - started
+        started = time.perf_counter()
         student = self.generate_capped(
             self.student_model, query, context, source_hint, allow_fallback=False
         )
+        student_generate_seconds = time.perf_counter() - started
+        started = time.perf_counter()
         student_check = verify_support(
             student["answer"], student["context_used"], self.similarity_score, threshold
         )
+        student_verify_seconds = time.perf_counter() - started
         teacher = None
         teacher_check = None
+        teacher_generate_seconds = 0.0
+        teacher_verify_seconds = 0.0
         if student_check["verdict"] == SUPPORTED:
             final = student["answer"]
             tier = "accept"
         else:
+            started = time.perf_counter()
             teacher = self.generate_capped(
                 self.teacher_model, query, context, source_hint, allow_fallback=False
             )
+            teacher_generate_seconds = time.perf_counter() - started
+            started = time.perf_counter()
             teacher_check = verify_support(
                 teacher["answer"], teacher["context_used"], self.similarity_score, threshold
             )
+            teacher_verify_seconds = time.perf_counter() - started
             if teacher_check["verdict"] == SUPPORTED:
                 final = teacher["answer"]
                 tier = "corrected"
@@ -383,6 +417,13 @@ class BaselinePipeline:
             "prompt_truncated": truncated_generations > 0,
             "truncated_generations": truncated_generations,
             "prompt_tokens": prompt_tokens,
+            "step_latency": {
+                "retrieve": retrieve_seconds,
+                "student_generate": student_generate_seconds,
+                "student_verify": student_verify_seconds,
+                "teacher_generate": teacher_generate_seconds,
+                "teacher_verify": teacher_verify_seconds,
+            },
         }
 
     def similarity_score(self, a, b):

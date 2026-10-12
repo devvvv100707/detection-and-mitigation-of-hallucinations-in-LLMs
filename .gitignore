@@ -8,3 +8,10 @@ __MACOSX/
 output.csv
 embeddings.npy
 .env
+.env.*
+node_modules/
+frontend/dist/
+.cache/
+*.pt
+*.bin
+.huggingface/

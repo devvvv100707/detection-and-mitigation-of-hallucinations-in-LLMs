@@ -1,0 +1,36 @@
+{
+  "seed": 42,
+  "validation_questions": 20,
+  "test_questions": 20,
+  "per_dataset_each_split": {
+    "pubmed": 10,
+    "healthcaremagic": 10
+  },
+  "models": {
+    "student": "google/flan-t5-small",
+    "teacher": "google/flan-t5-base",
+    "embedder": "all-MiniLM-L6-v2"
+  },
+  "thresholds": {
+    "retrieval_min_score": 0.25,
+    "detection": 0.38,
+    "blend": 0.55,
+    "prefer_teacher": 0.7,
+    "similarity_pass": 0.52
+  },
+  "verify_cutoff_grid": [
+    0.3,
+    0.4,
+    0.5,
+    0.6,
+    0.7
+  ],
+  "chosen_verify_cutoff": 0.3,
+  "library_versions_from_reproduction": {
+    "torch": "2.14.1+cpu",
+    "transformers": "4.40.1",
+    "sentence_transformers": "3.1.1",
+    "datasets": "4.8.2"
+  },
+  "note": "Figures are rebuilt from saved outputs. This file does not record a new model run."
+}

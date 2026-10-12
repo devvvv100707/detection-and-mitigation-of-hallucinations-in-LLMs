@@ -148,3 +148,6 @@ webencodings==0.5.1
 websocket-client==1.8.0
 xxhash==3.6.0
 yarl==1.23.0
+fastapi==0.115.6
+uvicorn==0.34.0
+sentence-transformers==3.1.1

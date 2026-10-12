@@ -1,0 +1,20 @@
+{
+  "name": "original preliminary experiment",
+  "source": "hallucination_results.png and baselines/BASELINE.md",
+  "reproducible": false,
+  "note": "Preserved from the original figure. Not reproducible: no seed and no per-question predictions were saved. Similarity-threshold results, not verified factual accuracy.",
+  "n_questions": 20,
+  "detector_flags": 5,
+  "detector_flag_rate_count": "5/20",
+  "mean_student_similarity": 0.462,
+  "mean_teacher_similarity": 0.569,
+  "mean_final_similarity": 0.556,
+  "similarity_pass_rate": 0.65,
+  "similarity_pass_count": "13/20",
+  "pubmed_similarity_pass_rate": 0.70,
+  "pubmed_similarity_pass_count": "7/10",
+  "healthcaremagic_similarity_pass_rate": 0.60,
+  "healthcaremagic_similarity_pass_count": "6/10",
+  "threshold_failure_rate": 0.35,
+  "threshold_failure_count": "7/20"
+}

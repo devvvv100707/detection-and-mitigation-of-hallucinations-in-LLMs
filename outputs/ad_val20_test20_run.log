@@ -1,0 +1,541 @@
+/home/ubuntu/.local/lib/python3.12/site-packages/huggingface_hub/file_download.py:949: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+Token indices sequence length is longer than the specified maximum sequence length for this model (521 > 512). Running this sequence through the model will result in indexing errors
+Token indices sequence length is longer than the specified maximum sequence length for this model (521 > 512). Running this sequence through the model will result in indexing errors
+Knowledge-base leakage overlaps: 0
+validation A_student_only pubmed_validation_776 sim=0.787 flag=not_applicable
+validation B_teacher_only pubmed_validation_776 sim=0.801 flag=not_applicable
+validation C_student_retrieval pubmed_validation_776 sim=0.471 flag=not_applicable
+validation D_baseline_mitigation pubmed_validation_776 sim=0.471 flag=false
+validation A_student_only pubmed_validation_507 sim=0.524 flag=not_applicable
+validation B_teacher_only pubmed_validation_507 sim=0.520 flag=not_applicable
+validation C_student_retrieval pubmed_validation_507 sim=0.319 flag=not_applicable
+validation D_baseline_mitigation pubmed_validation_507 sim=0.574 flag=false
+validation A_student_only pubmed_validation_895 sim=0.267 flag=not_applicable
+validation B_teacher_only pubmed_validation_895 sim=0.207 flag=not_applicable
+validation C_student_retrieval pubmed_validation_895 sim=0.514 flag=not_applicable
+validation D_baseline_mitigation pubmed_validation_895 sim=0.514 flag=false
+validation A_student_only pubmed_validation_922 sim=0.302 flag=not_applicable
+validation B_teacher_only pubmed_validation_922 sim=0.431 flag=not_applicable
+validation C_student_retrieval pubmed_validation_922 sim=0.143 flag=not_applicable
+validation D_baseline_mitigation pubmed_validation_922 sim=0.526 flag=true
+validation A_student_only pubmed_validation_33 sim=0.513 flag=not_applicable
+validation B_teacher_only pubmed_validation_33 sim=0.756 flag=not_applicable
+validation C_student_retrieval pubmed_validation_33 sim=0.513 flag=not_applicable
+validation D_baseline_mitigation pubmed_validation_33 sim=0.758 flag=false
+validation A_student_only pubmed_validation_483 sim=0.660 flag=not_applicable
+validation B_teacher_only pubmed_validation_483 sim=0.538 flag=not_applicable
+validation C_student_retrieval pubmed_validation_483 sim=0.180 flag=not_applicable
+validation D_baseline_mitigation pubmed_validation_483 sim=0.400 flag=false
+validation A_student_only pubmed_validation_85 sim=0.247 flag=not_applicable
+validation B_teacher_only pubmed_validation_85 sim=0.677 flag=not_applicable
+validation C_student_retrieval pubmed_validation_85 sim=0.247 flag=not_applicable
+validation D_baseline_mitigation pubmed_validation_85 sim=0.677 flag=true
+validation A_student_only pubmed_validation_750 sim=0.316 flag=not_applicable
+validation B_teacher_only pubmed_validation_750 sim=0.582 flag=not_applicable
+validation C_student_retrieval pubmed_validation_750 sim=0.373 flag=not_applicable
+validation D_baseline_mitigation pubmed_validation_750 sim=0.366 flag=false
+validation A_student_only pubmed_validation_354 sim=0.276 flag=not_applicable
+validation B_teacher_only pubmed_validation_354 sim=0.073 flag=not_applicable
+validation C_student_retrieval pubmed_validation_354 sim=0.280 flag=not_applicable
+validation D_baseline_mitigation pubmed_validation_354 sim=0.212 flag=false
+validation A_student_only pubmed_validation_523 sim=0.412 flag=not_applicable
+validation B_teacher_only pubmed_validation_523 sim=0.782 flag=not_applicable
+validation C_student_retrieval pubmed_validation_523 sim=0.596 flag=not_applicable
+validation D_baseline_mitigation pubmed_validation_523 sim=0.687 flag=false
+test A_student_only pubmed_test_184 sim=0.526 flag=not_applicable
+test B_teacher_only pubmed_test_184 sim=0.377 flag=not_applicable
+test C_student_retrieval pubmed_test_184 sim=0.500 flag=not_applicable
+test D_baseline_mitigation pubmed_test_184 sim=0.500 flag=false
+test A_student_only pubmed_test_809 sim=0.554 flag=not_applicable
+test B_teacher_only pubmed_test_809 sim=0.651 flag=not_applicable
+test C_student_retrieval pubmed_test_809 sim=0.556 flag=not_applicable
+test D_baseline_mitigation pubmed_test_809 sim=0.771 flag=false
+test A_student_only pubmed_test_418 sim=0.645 flag=not_applicable
+test B_teacher_only pubmed_test_418 sim=0.318 flag=not_applicable
+test C_student_retrieval pubmed_test_418 sim=0.800 flag=not_applicable
+test D_baseline_mitigation pubmed_test_418 sim=0.800 flag=false
+test A_student_only pubmed_test_615 sim=0.298 flag=not_applicable
+test B_teacher_only pubmed_test_615 sim=0.549 flag=not_applicable
+test C_student_retrieval pubmed_test_615 sim=0.779 flag=not_applicable
+test D_baseline_mitigation pubmed_test_615 sim=0.779 flag=false
+test A_student_only pubmed_test_682 sim=0.443 flag=not_applicable
+test B_teacher_only pubmed_test_682 sim=0.422 flag=not_applicable
+test C_student_retrieval pubmed_test_682 sim=0.276 flag=not_applicable
+test D_baseline_mitigation pubmed_test_682 sim=0.276 flag=false
+test A_student_only pubmed_test_501 sim=0.364 flag=not_applicable
+test B_teacher_only pubmed_test_501 sim=0.602 flag=not_applicable
+test C_student_retrieval pubmed_test_501 sim=0.622 flag=not_applicable
+test D_baseline_mitigation pubmed_test_501 sim=0.605 flag=false
+test A_student_only pubmed_test_760 sim=0.439 flag=not_applicable
+test B_teacher_only pubmed_test_760 sim=0.279 flag=not_applicable
+test C_student_retrieval pubmed_test_760 sim=0.135 flag=not_applicable
+test D_baseline_mitigation pubmed_test_760 sim=0.519 flag=true
+test A_student_only pubmed_test_49 sim=0.333 flag=not_applicable
+test B_teacher_only pubmed_test_49 sim=0.342 flag=not_applicable
+test C_student_retrieval pubmed_test_49 sim=0.465 flag=not_applicable
+test D_baseline_mitigation pubmed_test_49 sim=0.376 flag=false
+test A_student_only pubmed_test_732 sim=0.561 flag=not_applicable
+test B_teacher_only pubmed_test_732 sim=0.457 flag=not_applicable
+test C_student_retrieval pubmed_test_732 sim=0.570 flag=not_applicable
+test D_baseline_mitigation pubmed_test_732 sim=0.570 flag=false
+test A_student_only pubmed_test_336 sim=0.591 flag=not_applicable
+test B_teacher_only pubmed_test_336 sim=0.661 flag=not_applicable
+test C_student_retrieval pubmed_test_336 sim=0.324 flag=not_applicable
+test D_baseline_mitigation pubmed_test_336 sim=0.445 flag=true
+validation A_student_only healthcaremagic_validation_84919 sim=0.005 flag=not_applicable
+validation B_teacher_only healthcaremagic_validation_84919 sim=0.203 flag=not_applicable
+validation C_student_retrieval healthcaremagic_validation_84919 sim=0.278 flag=not_applicable
+validation D_baseline_mitigation healthcaremagic_validation_84919 sim=0.304 flag=false
+validation A_student_only healthcaremagic_validation_63861 sim=0.315 flag=not_applicable
+validation B_teacher_only healthcaremagic_validation_63861 sim=0.177 flag=not_applicable
+validation C_student_retrieval healthcaremagic_validation_63861 sim=0.003 flag=not_applicable
+validation D_baseline_mitigation healthcaremagic_validation_63861 sim=0.277 flag=true
+validation A_student_only healthcaremagic_validation_68992 sim=0.047 flag=not_applicable
+validation B_teacher_only healthcaremagic_validation_68992 sim=0.696 flag=not_applicable
+validation C_student_retrieval healthcaremagic_validation_68992 sim=0.720 flag=not_applicable
+validation D_baseline_mitigation healthcaremagic_validation_68992 sim=0.720 flag=false
+validation A_student_only healthcaremagic_validation_37810 sim=0.053 flag=not_applicable
+validation B_teacher_only healthcaremagic_validation_37810 sim=0.169 flag=not_applicable
+validation C_student_retrieval healthcaremagic_validation_37810 sim=0.613 flag=not_applicable
+validation D_baseline_mitigation healthcaremagic_validation_37810 sim=0.486 flag=false
+validation A_student_only healthcaremagic_validation_89911 sim=0.614 flag=not_applicable
+validation B_teacher_only healthcaremagic_validation_89911 sim=0.453 flag=not_applicable
+validation C_student_retrieval healthcaremagic_validation_89911 sim=0.386 flag=not_applicable
+validation D_baseline_mitigation healthcaremagic_validation_89911 sim=0.707 flag=false
+validation A_student_only healthcaremagic_validation_50243 sim=0.162 flag=not_applicable
+validation B_teacher_only healthcaremagic_validation_50243 sim=0.372 flag=not_applicable
+validation C_student_retrieval healthcaremagic_validation_50243 sim=0.195 flag=not_applicable
+validation D_baseline_mitigation healthcaremagic_validation_50243 sim=0.573 flag=true
+validation A_student_only healthcaremagic_validation_33320 sim=0.475 flag=not_applicable
+validation B_teacher_only healthcaremagic_validation_33320 sim=0.707 flag=not_applicable
+validation C_student_retrieval healthcaremagic_validation_33320 sim=0.041 flag=not_applicable
+validation D_baseline_mitigation healthcaremagic_validation_33320 sim=0.261 flag=true
+validation A_student_only healthcaremagic_validation_25600 sim=0.000 flag=not_applicable
+validation B_teacher_only healthcaremagic_validation_25600 sim=0.584 flag=not_applicable
+validation C_student_retrieval healthcaremagic_validation_25600 sim=0.626 flag=not_applicable
+validation D_baseline_mitigation healthcaremagic_validation_25600 sim=0.693 flag=false
+validation A_student_only healthcaremagic_validation_94946 sim=0.356 flag=not_applicable
+validation B_teacher_only healthcaremagic_validation_94946 sim=0.667 flag=not_applicable
+validation C_student_retrieval healthcaremagic_validation_94946 sim=0.620 flag=not_applicable
+validation D_baseline_mitigation healthcaremagic_validation_94946 sim=0.310 flag=true
+validation A_student_only healthcaremagic_validation_87201 sim=0.318 flag=not_applicable
+validation B_teacher_only healthcaremagic_validation_87201 sim=0.606 flag=not_applicable
+validation C_student_retrieval healthcaremagic_validation_87201 sim=0.495 flag=not_applicable
+validation D_baseline_mitigation healthcaremagic_validation_87201 sim=0.498 flag=false
+test A_student_only healthcaremagic_test_44108 sim=0.291 flag=not_applicable
+test B_teacher_only healthcaremagic_test_44108 sim=0.271 flag=not_applicable
+test C_student_retrieval healthcaremagic_test_44108 sim=0.338 flag=not_applicable
+test D_baseline_mitigation healthcaremagic_test_44108 sim=0.521 flag=false
+test A_student_only healthcaremagic_test_2675 sim=0.256 flag=not_applicable
+test B_teacher_only healthcaremagic_test_2675 sim=0.240 flag=not_applicable
+test C_student_retrieval healthcaremagic_test_2675 sim=0.240 flag=not_applicable
+test D_baseline_mitigation healthcaremagic_test_2675 sim=0.240 flag=false
+test A_student_only healthcaremagic_test_34601 sim=0.290 flag=not_applicable
+test B_teacher_only healthcaremagic_test_34601 sim=0.180 flag=not_applicable
+test C_student_retrieval healthcaremagic_test_34601 sim=0.314 flag=not_applicable
+test D_baseline_mitigation healthcaremagic_test_34601 sim=0.232 flag=true
+test A_student_only healthcaremagic_test_106854 sim=0.034 flag=not_applicable
+test B_teacher_only healthcaremagic_test_106854 sim=0.085 flag=not_applicable
+test C_student_retrieval healthcaremagic_test_106854 sim=0.033 flag=not_applicable
+test D_baseline_mitigation healthcaremagic_test_106854 sim=0.085 flag=false
+test A_student_only healthcaremagic_test_67517 sim=0.040 flag=not_applicable
+test B_teacher_only healthcaremagic_test_67517 sim=0.222 flag=not_applicable
+test C_student_retrieval healthcaremagic_test_67517 sim=0.142 flag=not_applicable
+test D_baseline_mitigation healthcaremagic_test_67517 sim=0.184 flag=true
+test A_student_only healthcaremagic_test_3960 sim=0.313 flag=not_applicable
+test B_teacher_only healthcaremagic_test_3960 sim=0.546 flag=not_applicable
+test C_student_retrieval healthcaremagic_test_3960 sim=0.294 flag=not_applicable
+test D_baseline_mitigation healthcaremagic_test_3960 sim=0.767 flag=true
+test A_student_only healthcaremagic_test_42340 sim=0.420 flag=not_applicable
+test B_teacher_only healthcaremagic_test_42340 sim=0.572 flag=not_applicable
+test C_student_retrieval healthcaremagic_test_42340 sim=0.285 flag=not_applicable
+test D_baseline_mitigation healthcaremagic_test_42340 sim=0.698 flag=true
+test A_student_only healthcaremagic_test_101817 sim=0.375 flag=not_applicable
+test B_teacher_only healthcaremagic_test_101817 sim=0.405 flag=not_applicable
+test C_student_retrieval healthcaremagic_test_101817 sim=0.437 flag=not_applicable
+test D_baseline_mitigation healthcaremagic_test_101817 sim=0.410 flag=false
+test A_student_only healthcaremagic_test_22814 sim=0.383 flag=not_applicable
+test B_teacher_only healthcaremagic_test_22814 sim=0.419 flag=not_applicable
+test C_student_retrieval healthcaremagic_test_22814 sim=0.093 flag=not_applicable
+test D_baseline_mitigation healthcaremagic_test_22814 sim=0.423 flag=true
+test A_student_only healthcaremagic_test_55667 sim=0.414 flag=not_applicable
+test B_teacher_only healthcaremagic_test_55667 sim=0.475 flag=not_applicable
+test C_student_retrieval healthcaremagic_test_55667 sim=0.105 flag=not_applicable
+test D_baseline_mitigation healthcaremagic_test_55667 sim=0.423 flag=true
+{
+  "configurations_run": [
+    "A_student_only",
+    "B_teacher_only",
+    "C_student_retrieval",
+    "D_baseline_mitigation"
+  ],
+  "configurations_not_run": [
+    "E_improved"
+  ],
+  "note": "similarity_pass_rate is the share of answers with cosine similarity to the reference text strictly above 0.52. It is not factual accuracy. detector_flags is null when that configuration does not run the student-teacher detector. Thresholds were not tuned on these questions.",
+  "models": {
+    "student": "google/flan-t5-small",
+    "teacher": "google/flan-t5-base",
+    "embedder": "all-MiniLM-L6-v2"
+  },
+  "thresholds": {
+    "retrieval_min_score": 0.25,
+    "detection": 0.38,
+    "blend": 0.55,
+    "prefer_teacher": 0.7,
+    "similarity_pass": 0.52
+  },
+  "split": {
+    "seed": 42,
+    "val_size": 20,
+    "test_size": 20,
+    "duplicates_removed": {
+      "pubmed": 0,
+      "healthcaremagic": 16
+    },
+    "n_validation": 20,
+    "n_test": 20,
+    "n_knowledge": 300,
+    "leakage_count": 0,
+    "split_difference": "Original main.py split is unshuffled and has no validation set: knowledge base indices 0-149 and test indices 150-159 within each source. This split shuffles with the configured seed, holds out val_size validation questions and test_size test questions (each split evenly across the two sources), and excludes those questions from the knowledge base."
+  },
+  "results": {
+    "A_student_only": {
+      "validation": {
+        "all": {
+          "n": 20,
+          "similarity_pass_count": 4,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.2,
+          "mean_similarity_to_reference": 0.33241504144389183,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 20,
+          "similarity_pass_count_excluding_fallback": 4,
+          "similarity_pass_rate_excluding_fallback": 0.2,
+          "prompt_truncation_count": 0,
+          "mean_latency_seconds": 0.6862466075499924
+        },
+        "pubmed": {
+          "n": 10,
+          "similarity_pass_count": 3,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.3,
+          "mean_similarity_to_reference": 0.4303912684321404,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 10,
+          "similarity_pass_count_excluding_fallback": 3,
+          "similarity_pass_rate_excluding_fallback": 0.3,
+          "prompt_truncation_count": 0,
+          "mean_latency_seconds": 0.5251158242999736
+        },
+        "healthcaremagic": {
+          "n": 10,
+          "similarity_pass_count": 1,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.1,
+          "mean_similarity_to_reference": 0.2344388144556433,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 10,
+          "similarity_pass_count_excluding_fallback": 1,
+          "similarity_pass_rate_excluding_fallback": 0.1,
+          "prompt_truncation_count": 0,
+          "mean_latency_seconds": 0.8473773908000112
+        }
+      },
+      "test": {
+        "all": {
+          "n": 20,
+          "similarity_pass_count": 5,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.25,
+          "mean_similarity_to_reference": 0.37859983611851933,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 20,
+          "similarity_pass_count_excluding_fallback": 5,
+          "similarity_pass_rate_excluding_fallback": 0.25,
+          "prompt_truncation_count": 0,
+          "mean_latency_seconds": 0.7151963186999865
+        },
+        "pubmed": {
+          "n": 10,
+          "similarity_pass_count": 5,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.5,
+          "mean_similarity_to_reference": 0.47542703747749326,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 10,
+          "similarity_pass_count_excluding_fallback": 5,
+          "similarity_pass_rate_excluding_fallback": 0.5,
+          "prompt_truncation_count": 0,
+          "mean_latency_seconds": 0.7403511071999673
+        },
+        "healthcaremagic": {
+          "n": 10,
+          "similarity_pass_count": 0,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.0,
+          "mean_similarity_to_reference": 0.28177263475954534,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 10,
+          "similarity_pass_count_excluding_fallback": 0,
+          "similarity_pass_rate_excluding_fallback": 0.0,
+          "prompt_truncation_count": 0,
+          "mean_latency_seconds": 0.6900415302000056
+        }
+      }
+    },
+    "B_teacher_only": {
+      "validation": {
+        "all": {
+          "n": 20,
+          "similarity_pass_count": 11,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.55,
+          "mean_similarity_to_reference": 0.5000518310815096,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 20,
+          "similarity_pass_count_excluding_fallback": 11,
+          "similarity_pass_rate_excluding_fallback": 0.55,
+          "prompt_truncation_count": 0,
+          "mean_latency_seconds": 1.5523547934500583
+        },
+        "pubmed": {
+          "n": 10,
+          "similarity_pass_count": 6,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.6,
+          "mean_similarity_to_reference": 0.5366345725953579,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 10,
+          "similarity_pass_count_excluding_fallback": 6,
+          "similarity_pass_rate_excluding_fallback": 0.6,
+          "prompt_truncation_count": 0,
+          "mean_latency_seconds": 1.2160342242000297
+        },
+        "healthcaremagic": {
+          "n": 10,
+          "similarity_pass_count": 5,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.5,
+          "mean_similarity_to_reference": 0.4634690895676613,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 10,
+          "similarity_pass_count_excluding_fallback": 5,
+          "similarity_pass_rate_excluding_fallback": 0.5,
+          "prompt_truncation_count": 0,
+          "mean_latency_seconds": 1.8886753627000872
+        }
+      },
+      "test": {
+        "all": {
+          "n": 20,
+          "similarity_pass_count": 6,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.3,
+          "mean_similarity_to_reference": 0.40357550904154776,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 20,
+          "similarity_pass_count_excluding_fallback": 6,
+          "similarity_pass_rate_excluding_fallback": 0.3,
+          "prompt_truncation_count": 0,
+          "mean_latency_seconds": 2.0836660936500038
+        },
+        "pubmed": {
+          "n": 10,
+          "similarity_pass_count": 4,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.4,
+          "mean_similarity_to_reference": 0.46582295596599577,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 10,
+          "similarity_pass_count_excluding_fallback": 4,
+          "similarity_pass_rate_excluding_fallback": 0.4,
+          "prompt_truncation_count": 0,
+          "mean_latency_seconds": 2.2238924333999877
+        },
+        "healthcaremagic": {
+          "n": 10,
+          "similarity_pass_count": 2,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.2,
+          "mean_similarity_to_reference": 0.34132806211709976,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 10,
+          "similarity_pass_count_excluding_fallback": 2,
+          "similarity_pass_rate_excluding_fallback": 0.2,
+          "prompt_truncation_count": 0,
+          "mean_latency_seconds": 1.94343975390002
+        }
+      }
+    },
+    "C_student_retrieval": {
+      "validation": {
+        "all": {
+          "n": 20,
+          "similarity_pass_count": 5,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.25,
+          "mean_similarity_to_reference": 0.3806450043106452,
+          "fallback_used_count": 2,
+          "n_excluding_fallback": 18,
+          "similarity_pass_count_excluding_fallback": 4,
+          "similarity_pass_rate_excluding_fallback": 0.2222222222222222,
+          "prompt_truncation_count": 15,
+          "mean_latency_seconds": 0.631158753849968
+        },
+        "pubmed": {
+          "n": 10,
+          "similarity_pass_count": 1,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.1,
+          "mean_similarity_to_reference": 0.36347889304161074,
+          "fallback_used_count": 1,
+          "n_excluding_fallback": 9,
+          "similarity_pass_count_excluding_fallback": 1,
+          "similarity_pass_rate_excluding_fallback": 0.1111111111111111,
+          "prompt_truncation_count": 5,
+          "mean_latency_seconds": 0.4872145565999745
+        },
+        "healthcaremagic": {
+          "n": 10,
+          "similarity_pass_count": 4,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.4,
+          "mean_similarity_to_reference": 0.39781111557967963,
+          "fallback_used_count": 1,
+          "n_excluding_fallback": 9,
+          "similarity_pass_count_excluding_fallback": 3,
+          "similarity_pass_rate_excluding_fallback": 0.3333333333333333,
+          "prompt_truncation_count": 10,
+          "mean_latency_seconds": 0.7751029510999615
+        }
+      },
+      "test": {
+        "all": {
+          "n": 20,
+          "similarity_pass_count": 5,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.25,
+          "mean_similarity_to_reference": 0.36534859947860243,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 20,
+          "similarity_pass_count_excluding_fallback": 5,
+          "similarity_pass_rate_excluding_fallback": 0.25,
+          "prompt_truncation_count": 18,
+          "mean_latency_seconds": 0.6499884930499548
+        },
+        "pubmed": {
+          "n": 10,
+          "similarity_pass_count": 5,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.5,
+          "mean_similarity_to_reference": 0.5025640681385994,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 10,
+          "similarity_pass_count_excluding_fallback": 5,
+          "similarity_pass_rate_excluding_fallback": 0.5,
+          "prompt_truncation_count": 8,
+          "mean_latency_seconds": 0.4123896718999731
+        },
+        "healthcaremagic": {
+          "n": 10,
+          "similarity_pass_count": 0,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.0,
+          "mean_similarity_to_reference": 0.22813313081860542,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 10,
+          "similarity_pass_count_excluding_fallback": 0,
+          "similarity_pass_rate_excluding_fallback": 0.0,
+          "prompt_truncation_count": 10,
+          "mean_latency_seconds": 0.8875873141999364
+        }
+      }
+    },
+    "D_baseline_mitigation": {
+      "validation": {
+        "all": {
+          "n": 20,
+          "similarity_pass_count": 9,
+          "detector_flags": 6,
+          "similarity_pass_rate": 0.45,
+          "mean_similarity_to_reference": 0.5007011339068412,
+          "fallback_used_count": 4,
+          "n_excluding_fallback": 16,
+          "similarity_pass_count_excluding_fallback": 8,
+          "similarity_pass_rate_excluding_fallback": 0.5,
+          "prompt_truncation_count": 30,
+          "mean_latency_seconds": 2.631351725899981
+        },
+        "pubmed": {
+          "n": 10,
+          "similarity_pass_count": 5,
+          "detector_flags": 2,
+          "similarity_pass_rate": 0.5,
+          "mean_similarity_to_reference": 0.5184607177972793,
+          "fallback_used_count": 1,
+          "n_excluding_fallback": 9,
+          "similarity_pass_count_excluding_fallback": 5,
+          "similarity_pass_rate_excluding_fallback": 0.5555555555555556,
+          "prompt_truncation_count": 10,
+          "mean_latency_seconds": 2.0239201689999846
+        },
+        "healthcaremagic": {
+          "n": 10,
+          "similarity_pass_count": 4,
+          "detector_flags": 4,
+          "similarity_pass_rate": 0.4,
+          "mean_similarity_to_reference": 0.4829415500164032,
+          "fallback_used_count": 3,
+          "n_excluding_fallback": 7,
+          "similarity_pass_count_excluding_fallback": 3,
+          "similarity_pass_rate_excluding_fallback": 0.42857142857142855,
+          "prompt_truncation_count": 20,
+          "mean_latency_seconds": 3.2387832827999774
+        }
+      },
+      "test": {
+        "all": {
+          "n": 20,
+          "similarity_pass_count": 8,
+          "detector_flags": 8,
+          "similarity_pass_rate": 0.4,
+          "mean_similarity_to_reference": 0.48122297450900076,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 20,
+          "similarity_pass_count_excluding_fallback": 8,
+          "similarity_pass_rate_excluding_fallback": 0.4,
+          "prompt_truncation_count": 36,
+          "mean_latency_seconds": 3.1445821880499807
+        },
+        "pubmed": {
+          "n": 10,
+          "similarity_pass_count": 5,
+          "detector_flags": 2,
+          "similarity_pass_rate": 0.5,
+          "mean_similarity_to_reference": 0.5642089068889617,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 10,
+          "similarity_pass_count_excluding_fallback": 5,
+          "similarity_pass_rate_excluding_fallback": 0.5,
+          "prompt_truncation_count": 16,
+          "mean_latency_seconds": 2.3481460761999644
+        },
+        "healthcaremagic": {
+          "n": 10,
+          "similarity_pass_count": 3,
+          "detector_flags": 6,
+          "similarity_pass_rate": 0.3,
+          "mean_similarity_to_reference": 0.39823704212903976,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 10,
+          "similarity_pass_count_excluding_fallback": 3,
+          "similarity_pass_rate_excluding_fallback": 0.3,
+          "prompt_truncation_count": 20,
+          "mean_latency_seconds": 3.941018299899997
+        }
+      }
+    }
+  }
+}

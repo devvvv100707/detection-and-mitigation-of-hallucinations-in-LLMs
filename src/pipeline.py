@@ -5,6 +5,7 @@ branches. Improved mitigation is not implemented here.
 """
 
 from dataclasses import dataclass
+import random
 import re
 
 from datasets import load_dataset
@@ -38,6 +39,8 @@ class PipelineConfig:
     teacher_max_new_tokens: int = 200
     kb_size_per_source: int = 150
     test_size_per_source: int = 10
+    val_size: int = 20
+    test_size: int = 20
 
 
 def select_device():
@@ -189,14 +192,18 @@ class BaselinePipeline:
                 f"Think step by step. Provide a detailed, accurate medical answer:"
             )
 
+        prompt_tokens = len(model.tokenizer(prompt, add_special_tokens=True)["input_ids"])
+        truncated = prompt_tokens > model.tokenizer.model_max_length
         result = model(prompt, do_sample=False)
         ans = result[0]["generated_text"].strip()
         ans = re.sub(r'\b(\w+)( \1\b)+', r'\1', ans)
+        fallback_used = False
         if len(ans.split()) < 8 and context:
             lines = [line for line in context.split("\n") if line.startswith("A:")]
             if lines:
                 ans = lines[0].replace("A:", "").strip()
-        return ans
+                fallback_used = True
+        return ans, fallback_used, truncated, prompt_tokens
 
     def similarity_score(self, a, b):
         e1 = self.embedder.encode(a, convert_to_tensor=True)
@@ -232,8 +239,12 @@ class BaselinePipeline:
 
     def full_pipeline(self, query, source_hint="general"):
         context = self.retrieve_context(query)
-        student_ans = self.generate_answer(self.student_model, query, context, source_hint)
-        teacher_ans = self.generate_answer(self.teacher_model, query, context, source_hint)
+        student_ans, student_fallback, student_truncated, student_tokens = self.generate_answer(
+            self.student_model, query, context, source_hint
+        )
+        teacher_ans, teacher_fallback, teacher_truncated, teacher_tokens = self.generate_answer(
+            self.teacher_model, query, context, source_hint
+        )
         info = self.detect_hallucination(student_ans, teacher_ans, context)
         final, msg = self.mitigate(student_ans, teacher_ans, info)
         return {
@@ -243,4 +254,146 @@ class BaselinePipeline:
             "final_ans": final,
             "mitigation_msg": msg,
             "hallucination": info,
+            "student_fallback_used": student_fallback,
+            "teacher_fallback_used": teacher_fallback,
+            "student_prompt_truncated": student_truncated,
+            "teacher_prompt_truncated": teacher_truncated,
+            "student_prompt_tokens": student_tokens,
+            "teacher_prompt_tokens": teacher_tokens,
         }
+
+
+def normalize_question(text):
+    return " ".join(str(text).lower().split())
+
+
+def _dedupe(rows):
+    seen = set()
+    kept = []
+    dropped = 0
+    for row in rows:
+        key = normalize_question(row["question"])
+        if not key or key in seen:
+            dropped += 1
+            continue
+        seen.add(key)
+        kept.append(row)
+    return kept, dropped
+
+
+def _load_pool():
+    """Load both datasets and drop duplicate question text."""
+    pubmed = load_dataset("pubmed_qa", "pqa_labeled")["train"]
+    pubmed_rows = []
+    for index, item in enumerate(pubmed):
+        pubmed_rows.append({
+            "question": item["question"],
+            "true_answer": item["long_answer"],
+            "kb_context": " ".join(item["context"]["contexts"])[:800],
+            "kb_answer": item["long_answer"],
+            "source": "pubmed",
+            "row_index": index,
+        })
+    hcm = load_dataset("lavita/ChatDoctor-HealthCareMagic-100k", split="train")
+    hcm = hcm.filter(
+        lambda x: x["input"] and x["output"]
+        and len(x["input"].split()) > 5
+        and len(x["output"].split()) > 20
+    )
+    hcm_rows = []
+    for index, item in enumerate(hcm):
+        if len(item["output"].split()) < 20:
+            continue
+        hcm_rows.append({
+            "question": item["input"].strip(),
+            "true_answer": item["output"].strip(),
+            "kb_context": item["input"].strip()[:800],
+            "kb_answer": item["output"].strip()[:800],
+            "source": "healthcaremagic",
+            "row_index": index,
+        })
+    pubmed_rows, pubmed_dropped = _dedupe(pubmed_rows)
+    hcm_rows, hcm_dropped = _dedupe(hcm_rows)
+    return pubmed_rows, hcm_rows, pubmed_dropped, hcm_dropped
+
+
+def build_experiment_splits(config: PipelineConfig):
+    """Seeded validation/test split whose questions are absent from the KB.
+
+    This is not the original adjacent-slice split. main.py uses PubMedQA
+    train[0:150] as the knowledge base and train[150:160] as the only test
+    slice, with no shuffle and no validation split. The same pattern is used
+    after filtering HealthCareMagic. This function shuffles with config.seed,
+    holds out val_size validation questions and test_size test questions.
+    Each of those sizes is split evenly across the two sources. The knowledge
+    base is built only from other rows.
+    """
+    if config.val_size < 2 or config.val_size % 2 != 0 or config.test_size < 2 or config.test_size % 2 != 0:
+        raise ValueError("val_size and test_size must be even so each source contributes the same count")
+    pubmed_rows, hcm_rows, pubmed_dropped, hcm_dropped = _load_pool()
+    rng = random.Random(config.seed)
+    val_per_source = config.val_size // 2
+    test_per_source = config.test_size // 2
+    per_source = val_per_source + test_per_source
+    heldout = []
+    knowledge = []
+    for source_rows in (pubmed_rows, hcm_rows):
+        order = list(range(len(source_rows)))
+        rng.shuffle(order)
+        chosen = order[:per_source]
+        rest = order[per_source:]
+        if len(chosen) < per_source:
+            raise ValueError("Not enough unique questions for the requested validation and test sizes")
+        for position, index in enumerate(chosen):
+            row = dict(source_rows[index])
+            row["split"] = "validation" if position < val_per_source else "test"
+            heldout.append(row)
+        kb_added = 0
+        for index in rest:
+            if kb_added >= config.kb_size_per_source:
+                break
+            knowledge.append(source_rows[index])
+            kb_added += 1
+
+    held_keys = {normalize_question(row["question"]) for row in heldout}
+    knowledge = [row for row in knowledge if normalize_question(row["question"]) not in held_keys]
+    kb_keys = {normalize_question(row["question"]) for row in knowledge}
+    leaked = held_keys & kb_keys
+    print(f"Knowledge-base leakage overlaps: {len(leaked)}")
+    if leaked:
+        raise RuntimeError(f"Knowledge base contains {len(leaked)} validation or test questions")
+
+    knowledge_data = [{
+        "question": row["question"],
+        "context": row["kb_context"],
+        "answer": row["kb_answer"],
+        "source": row["source"],
+    } for row in knowledge]
+    questions = []
+    for number, row in enumerate(heldout, start=1):
+        questions.append({
+            "question_id": f"{row['source']}_{row['split']}_{row['row_index']}",
+            "split": row["split"],
+            "source": row["source"],
+            "row_index": row["row_index"],
+            "question": row["question"],
+            "true_answer": row["true_answer"],
+        })
+    meta = {
+        "seed": config.seed,
+        "val_size": config.val_size,
+        "test_size": config.test_size,
+        "duplicates_removed": {"pubmed": pubmed_dropped, "healthcaremagic": hcm_dropped},
+        "n_validation": sum(row["split"] == "validation" for row in questions),
+        "n_test": sum(row["split"] == "test" for row in questions),
+        "n_knowledge": len(knowledge_data),
+        "leakage_count": 0,
+        "split_difference": (
+            "Original main.py split is unshuffled and has no validation set: "
+            "knowledge base indices 0-149 and test indices 150-159 within each source. "
+            "This split shuffles with the configured seed, holds out val_size validation questions "
+            "and test_size test questions (each split evenly across the two sources), "
+            "and excludes those questions from the knowledge base."
+        ),
+    }
+    return knowledge_data, questions, meta

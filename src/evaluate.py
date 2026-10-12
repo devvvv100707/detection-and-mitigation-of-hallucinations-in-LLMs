@@ -15,7 +15,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from pipeline import BaselinePipeline, PipelineConfig, load_sources, select_device
+from pipeline import (
+    BaselinePipeline,
+    PipelineConfig,
+    build_experiment_splits,
+    load_sources,
+    select_device,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_DIR = ROOT / "outputs"
@@ -222,5 +228,176 @@ def evaluate(config: PipelineConfig | None = None):
     return metrics
 
 
+def _rates(rows, pubmed_cutoff, hcm_cutoff):
+    def pack(subset):
+        if not subset:
+            return {"n": 0, "detector_flags": None, "similarity_pass_rate": None}
+        flagged = [row["detector_flag"] for row in subset]
+        if any(flag == "not_applicable" for flag in flagged):
+            detector_flags = None
+        else:
+            detector_flags = int(sum(flag == "true" for flag in flagged))
+        passed = 0
+        for row in subset:
+            cutoff = pubmed_cutoff if row["dataset"] == "pubmed" else hcm_cutoff
+            if row["similarity_to_reference"] > cutoff:
+                passed += 1
+        without_fallback = [row for row in subset if row["fallback_used"] == "false"]
+        passed_without_fallback = 0
+        for row in without_fallback:
+            cutoff = pubmed_cutoff if row["dataset"] == "pubmed" else hcm_cutoff
+            if row["similarity_to_reference"] > cutoff:
+                passed_without_fallback += 1
+        return {
+            "n": len(subset),
+            "similarity_pass_count": passed,
+            "detector_flags": detector_flags,
+            "similarity_pass_rate": passed / len(subset),
+            "mean_similarity_to_reference": float(np.mean([row["similarity_to_reference"] for row in subset])),
+            "fallback_used_count": int(sum(row["fallback_used"] == "true" for row in subset)),
+            "n_excluding_fallback": len(without_fallback),
+            "similarity_pass_count_excluding_fallback": passed_without_fallback,
+            "similarity_pass_rate_excluding_fallback": (
+                passed_without_fallback / len(without_fallback) if without_fallback else None
+            ),
+            "prompt_truncation_count": int(sum(int(row["truncated_generations"]) for row in subset)),
+            "mean_latency_seconds": float(np.mean([float(row["latency_seconds"]) for row in subset])),
+        }
+
+    return {
+        "all": pack(rows),
+        "pubmed": pack([row for row in rows if row["dataset"] == "pubmed"]),
+        "healthcaremagic": pack([row for row in rows if row["dataset"] == "healthcaremagic"]),
+    }
+
+
+def run_configurations_ad(val_size=20, test_size=20, seed=42):
+    """Run configs A-D on one seeded validation/test split. Config E is not run."""
+    config = PipelineConfig(mode="baseline", val_size=val_size, test_size=test_size, seed=seed)
+    knowledge_data, questions, split_meta = build_experiment_splits(config)
+    pipe = BaselinePipeline(config, knowledge_data)
+    rows = []
+    for item in questions:
+        query = item["question"]
+        source = item["source"]
+        truth = item["true_answer"]
+        context = pipe.retrieve_context(query)
+
+        started = time.perf_counter()
+        answer_a, fallback_a, trunc_a, tokens_a = pipe.generate_answer(pipe.student_model, query, "", source)
+        latency_a = time.perf_counter() - started
+
+        started = time.perf_counter()
+        answer_b, fallback_b, trunc_b, tokens_b = pipe.generate_answer(pipe.teacher_model, query, "", source)
+        latency_b = time.perf_counter() - started
+
+        started = time.perf_counter()
+        answer_c, fallback_c, trunc_c, tokens_c = pipe.generate_answer(pipe.student_model, query, context, source)
+        latency_c = time.perf_counter() - started
+
+        started = time.perf_counter()
+        result_d = pipe.full_pipeline(query, source_hint=source)
+        latency_d = time.perf_counter() - started
+
+        d_truncated = result_d["student_prompt_truncated"] or result_d["teacher_prompt_truncated"]
+        d_tokens = max(result_d["student_prompt_tokens"], result_d["teacher_prompt_tokens"])
+        d_truncations = int(result_d["student_prompt_truncated"]) + int(result_d["teacher_prompt_truncated"])
+        outputs = [
+            ("A_student_only", answer_a, fallback_a, latency_a, "not_applicable", trunc_a, tokens_a, int(trunc_a)),
+            ("B_teacher_only", answer_b, fallback_b, latency_b, "not_applicable", trunc_b, tokens_b, int(trunc_b)),
+            ("C_student_retrieval", answer_c, fallback_c, latency_c, "not_applicable", trunc_c, tokens_c, int(trunc_c)),
+            (
+                "D_baseline_mitigation",
+                result_d["final_ans"],
+                result_d["student_fallback_used"] or result_d["teacher_fallback_used"],
+                latency_d,
+                "true" if result_d["hallucination"]["is_hallucinating"] else "false",
+                d_truncated,
+                d_tokens,
+                d_truncations,
+            ),
+        ]
+        for name, answer, fallback, latency, flag, truncated, prompt_tokens, truncations in outputs:
+            rows.append({
+                "question_id": item["question_id"],
+                "split": item["split"],
+                "dataset": source,
+                "row_index": item["row_index"],
+                "configuration": name,
+                "answer": answer,
+                "similarity_to_reference": pipe.similarity_score(answer, truth),
+                "detector_flag": flag,
+                "fallback_used": "true" if fallback else "false",
+                "prompt_truncated": "true" if truncated else "false",
+                "prompt_tokens": prompt_tokens,
+                "truncated_generations": truncations,
+                "latency_seconds": latency,
+            })
+            print(
+                f"{item['split']} {name} {item['question_id']} "
+                f"sim={rows[-1]['similarity_to_reference']:.3f} flag={flag}"
+            )
+
+    by_config = {}
+    for name in ("A_student_only", "B_teacher_only", "C_student_retrieval", "D_baseline_mitigation"):
+        selected = [row for row in rows if row["configuration"] == name]
+        by_config[name] = {
+            "validation": _rates(
+                [row for row in selected if row["split"] == "validation"],
+                config.pubmed_pass_threshold,
+                config.hcm_pass_threshold,
+            ),
+            "test": _rates(
+                [row for row in selected if row["split"] == "test"],
+                config.pubmed_pass_threshold,
+                config.hcm_pass_threshold,
+            ),
+        }
+
+    metrics = {
+        "configurations_run": ["A_student_only", "B_teacher_only", "C_student_retrieval", "D_baseline_mitigation"],
+        "configurations_not_run": ["E_improved"],
+        "note": (
+            "similarity_pass_rate is the share of answers with cosine similarity "
+            "to the reference text strictly above 0.52. It is not factual accuracy. "
+            "detector_flags is null when that configuration does not run the student-teacher detector. "
+            "Thresholds were not tuned on these questions."
+        ),
+        "models": {
+            "student": config.student_model_name,
+            "teacher": config.teacher_model_name,
+            "embedder": config.embedder_name,
+        },
+        "thresholds": {
+            "retrieval_min_score": config.retrieval_min_score,
+            "detection": config.detection_threshold,
+            "blend": config.blend_threshold,
+            "prefer_teacher": config.prefer_teacher_threshold,
+            "similarity_pass": config.pubmed_pass_threshold,
+        },
+        "split": split_meta,
+        "results": by_config,
+    }
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    pred_path = OUTPUT_DIR / f"ad_val{val_size}_test{test_size}_predictions.csv"
+    metrics_path = OUTPUT_DIR / f"ad_val{val_size}_test{test_size}_metrics.json"
+    with pred_path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(rows[0].keys()))
+        writer.writeheader()
+        writer.writerows(rows)
+    metrics_path.write_text(json.dumps(metrics, indent=2), encoding="utf-8")
+    print(json.dumps(metrics, indent=2))
+    return metrics
+
+
 if __name__ == "__main__":
-    evaluate()
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--configs-ad", action="store_true")
+    parser.add_argument("--val-size", type=int, default=20)
+    parser.add_argument("--test-size", type=int, default=20)
+    args = parser.parse_args()
+    if args.configs_ad:
+        run_configurations_ad(val_size=args.val_size, test_size=args.test_size)
+    else:
+        evaluate()

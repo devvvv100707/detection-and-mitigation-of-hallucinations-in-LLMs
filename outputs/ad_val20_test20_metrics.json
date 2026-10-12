@@ -1,0 +1,376 @@
+{
+  "configurations_run": [
+    "A_student_only",
+    "B_teacher_only",
+    "C_student_retrieval",
+    "D_baseline_mitigation"
+  ],
+  "configurations_not_run": [
+    "E_improved"
+  ],
+  "note": "similarity_pass_rate is the share of answers with cosine similarity to the reference text strictly above 0.52. It is not factual accuracy. detector_flags is null when that configuration does not run the student-teacher detector. Thresholds were not tuned on these questions.",
+  "models": {
+    "student": "google/flan-t5-small",
+    "teacher": "google/flan-t5-base",
+    "embedder": "all-MiniLM-L6-v2"
+  },
+  "thresholds": {
+    "retrieval_min_score": 0.25,
+    "detection": 0.38,
+    "blend": 0.55,
+    "prefer_teacher": 0.7,
+    "similarity_pass": 0.52
+  },
+  "split": {
+    "seed": 42,
+    "val_size": 20,
+    "test_size": 20,
+    "duplicates_removed": {
+      "pubmed": 0,
+      "healthcaremagic": 16
+    },
+    "n_validation": 20,
+    "n_test": 20,
+    "n_knowledge": 300,
+    "leakage_count": 0,
+    "split_difference": "Original main.py split is unshuffled and has no validation set: knowledge base indices 0-149 and test indices 150-159 within each source. This split shuffles with the configured seed, holds out val_size validation questions and test_size test questions (each split evenly across the two sources), and excludes those questions from the knowledge base."
+  },
+  "results": {
+    "A_student_only": {
+      "validation": {
+        "all": {
+          "n": 20,
+          "similarity_pass_count": 4,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.2,
+          "mean_similarity_to_reference": 0.33241504144389183,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 20,
+          "similarity_pass_count_excluding_fallback": 4,
+          "similarity_pass_rate_excluding_fallback": 0.2,
+          "prompt_truncation_count": 0,
+          "mean_latency_seconds": 0.6862466075499924
+        },
+        "pubmed": {
+          "n": 10,
+          "similarity_pass_count": 3,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.3,
+          "mean_similarity_to_reference": 0.4303912684321404,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 10,
+          "similarity_pass_count_excluding_fallback": 3,
+          "similarity_pass_rate_excluding_fallback": 0.3,
+          "prompt_truncation_count": 0,
+          "mean_latency_seconds": 0.5251158242999736
+        },
+        "healthcaremagic": {
+          "n": 10,
+          "similarity_pass_count": 1,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.1,
+          "mean_similarity_to_reference": 0.2344388144556433,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 10,
+          "similarity_pass_count_excluding_fallback": 1,
+          "similarity_pass_rate_excluding_fallback": 0.1,
+          "prompt_truncation_count": 0,
+          "mean_latency_seconds": 0.8473773908000112
+        }
+      },
+      "test": {
+        "all": {
+          "n": 20,
+          "similarity_pass_count": 5,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.25,
+          "mean_similarity_to_reference": 0.37859983611851933,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 20,
+          "similarity_pass_count_excluding_fallback": 5,
+          "similarity_pass_rate_excluding_fallback": 0.25,
+          "prompt_truncation_count": 0,
+          "mean_latency_seconds": 0.7151963186999865
+        },
+        "pubmed": {
+          "n": 10,
+          "similarity_pass_count": 5,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.5,
+          "mean_similarity_to_reference": 0.47542703747749326,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 10,
+          "similarity_pass_count_excluding_fallback": 5,
+          "similarity_pass_rate_excluding_fallback": 0.5,
+          "prompt_truncation_count": 0,
+          "mean_latency_seconds": 0.7403511071999673
+        },
+        "healthcaremagic": {
+          "n": 10,
+          "similarity_pass_count": 0,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.0,
+          "mean_similarity_to_reference": 0.28177263475954534,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 10,
+          "similarity_pass_count_excluding_fallback": 0,
+          "similarity_pass_rate_excluding_fallback": 0.0,
+          "prompt_truncation_count": 0,
+          "mean_latency_seconds": 0.6900415302000056
+        }
+      }
+    },
+    "B_teacher_only": {
+      "validation": {
+        "all": {
+          "n": 20,
+          "similarity_pass_count": 11,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.55,
+          "mean_similarity_to_reference": 0.5000518310815096,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 20,
+          "similarity_pass_count_excluding_fallback": 11,
+          "similarity_pass_rate_excluding_fallback": 0.55,
+          "prompt_truncation_count": 0,
+          "mean_latency_seconds": 1.5523547934500583
+        },
+        "pubmed": {
+          "n": 10,
+          "similarity_pass_count": 6,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.6,
+          "mean_similarity_to_reference": 0.5366345725953579,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 10,
+          "similarity_pass_count_excluding_fallback": 6,
+          "similarity_pass_rate_excluding_fallback": 0.6,
+          "prompt_truncation_count": 0,
+          "mean_latency_seconds": 1.2160342242000297
+        },
+        "healthcaremagic": {
+          "n": 10,
+          "similarity_pass_count": 5,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.5,
+          "mean_similarity_to_reference": 0.4634690895676613,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 10,
+          "similarity_pass_count_excluding_fallback": 5,
+          "similarity_pass_rate_excluding_fallback": 0.5,
+          "prompt_truncation_count": 0,
+          "mean_latency_seconds": 1.8886753627000872
+        }
+      },
+      "test": {
+        "all": {
+          "n": 20,
+          "similarity_pass_count": 6,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.3,
+          "mean_similarity_to_reference": 0.40357550904154776,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 20,
+          "similarity_pass_count_excluding_fallback": 6,
+          "similarity_pass_rate_excluding_fallback": 0.3,
+          "prompt_truncation_count": 0,
+          "mean_latency_seconds": 2.0836660936500038
+        },
+        "pubmed": {
+          "n": 10,
+          "similarity_pass_count": 4,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.4,
+          "mean_similarity_to_reference": 0.46582295596599577,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 10,
+          "similarity_pass_count_excluding_fallback": 4,
+          "similarity_pass_rate_excluding_fallback": 0.4,
+          "prompt_truncation_count": 0,
+          "mean_latency_seconds": 2.2238924333999877
+        },
+        "healthcaremagic": {
+          "n": 10,
+          "similarity_pass_count": 2,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.2,
+          "mean_similarity_to_reference": 0.34132806211709976,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 10,
+          "similarity_pass_count_excluding_fallback": 2,
+          "similarity_pass_rate_excluding_fallback": 0.2,
+          "prompt_truncation_count": 0,
+          "mean_latency_seconds": 1.94343975390002
+        }
+      }
+    },
+    "C_student_retrieval": {
+      "validation": {
+        "all": {
+          "n": 20,
+          "similarity_pass_count": 5,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.25,
+          "mean_similarity_to_reference": 0.3806450043106452,
+          "fallback_used_count": 2,
+          "n_excluding_fallback": 18,
+          "similarity_pass_count_excluding_fallback": 4,
+          "similarity_pass_rate_excluding_fallback": 0.2222222222222222,
+          "prompt_truncation_count": 15,
+          "mean_latency_seconds": 0.631158753849968
+        },
+        "pubmed": {
+          "n": 10,
+          "similarity_pass_count": 1,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.1,
+          "mean_similarity_to_reference": 0.36347889304161074,
+          "fallback_used_count": 1,
+          "n_excluding_fallback": 9,
+          "similarity_pass_count_excluding_fallback": 1,
+          "similarity_pass_rate_excluding_fallback": 0.1111111111111111,
+          "prompt_truncation_count": 5,
+          "mean_latency_seconds": 0.4872145565999745
+        },
+        "healthcaremagic": {
+          "n": 10,
+          "similarity_pass_count": 4,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.4,
+          "mean_similarity_to_reference": 0.39781111557967963,
+          "fallback_used_count": 1,
+          "n_excluding_fallback": 9,
+          "similarity_pass_count_excluding_fallback": 3,
+          "similarity_pass_rate_excluding_fallback": 0.3333333333333333,
+          "prompt_truncation_count": 10,
+          "mean_latency_seconds": 0.7751029510999615
+        }
+      },
+      "test": {
+        "all": {
+          "n": 20,
+          "similarity_pass_count": 5,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.25,
+          "mean_similarity_to_reference": 0.36534859947860243,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 20,
+          "similarity_pass_count_excluding_fallback": 5,
+          "similarity_pass_rate_excluding_fallback": 0.25,
+          "prompt_truncation_count": 18,
+          "mean_latency_seconds": 0.6499884930499548
+        },
+        "pubmed": {
+          "n": 10,
+          "similarity_pass_count": 5,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.5,
+          "mean_similarity_to_reference": 0.5025640681385994,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 10,
+          "similarity_pass_count_excluding_fallback": 5,
+          "similarity_pass_rate_excluding_fallback": 0.5,
+          "prompt_truncation_count": 8,
+          "mean_latency_seconds": 0.4123896718999731
+        },
+        "healthcaremagic": {
+          "n": 10,
+          "similarity_pass_count": 0,
+          "detector_flags": null,
+          "similarity_pass_rate": 0.0,
+          "mean_similarity_to_reference": 0.22813313081860542,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 10,
+          "similarity_pass_count_excluding_fallback": 0,
+          "similarity_pass_rate_excluding_fallback": 0.0,
+          "prompt_truncation_count": 10,
+          "mean_latency_seconds": 0.8875873141999364
+        }
+      }
+    },
+    "D_baseline_mitigation": {
+      "validation": {
+        "all": {
+          "n": 20,
+          "similarity_pass_count": 9,
+          "detector_flags": 6,
+          "similarity_pass_rate": 0.45,
+          "mean_similarity_to_reference": 0.5007011339068412,
+          "fallback_used_count": 4,
+          "n_excluding_fallback": 16,
+          "similarity_pass_count_excluding_fallback": 8,
+          "similarity_pass_rate_excluding_fallback": 0.5,
+          "prompt_truncation_count": 30,
+          "mean_latency_seconds": 2.631351725899981
+        },
+        "pubmed": {
+          "n": 10,
+          "similarity_pass_count": 5,
+          "detector_flags": 2,
+          "similarity_pass_rate": 0.5,
+          "mean_similarity_to_reference": 0.5184607177972793,
+          "fallback_used_count": 1,
+          "n_excluding_fallback": 9,
+          "similarity_pass_count_excluding_fallback": 5,
+          "similarity_pass_rate_excluding_fallback": 0.5555555555555556,
+          "prompt_truncation_count": 10,
+          "mean_latency_seconds": 2.0239201689999846
+        },
+        "healthcaremagic": {
+          "n": 10,
+          "similarity_pass_count": 4,
+          "detector_flags": 4,
+          "similarity_pass_rate": 0.4,
+          "mean_similarity_to_reference": 0.4829415500164032,
+          "fallback_used_count": 3,
+          "n_excluding_fallback": 7,
+          "similarity_pass_count_excluding_fallback": 3,
+          "similarity_pass_rate_excluding_fallback": 0.42857142857142855,
+          "prompt_truncation_count": 20,
+          "mean_latency_seconds": 3.2387832827999774
+        }
+      },
+      "test": {
+        "all": {
+          "n": 20,
+          "similarity_pass_count": 8,
+          "detector_flags": 8,
+          "similarity_pass_rate": 0.4,
+          "mean_similarity_to_reference": 0.48122297450900076,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 20,
+          "similarity_pass_count_excluding_fallback": 8,
+          "similarity_pass_rate_excluding_fallback": 0.4,
+          "prompt_truncation_count": 36,
+          "mean_latency_seconds": 3.1445821880499807
+        },
+        "pubmed": {
+          "n": 10,
+          "similarity_pass_count": 5,
+          "detector_flags": 2,
+          "similarity_pass_rate": 0.5,
+          "mean_similarity_to_reference": 0.5642089068889617,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 10,
+          "similarity_pass_count_excluding_fallback": 5,
+          "similarity_pass_rate_excluding_fallback": 0.5,
+          "prompt_truncation_count": 16,
+          "mean_latency_seconds": 2.3481460761999644
+        },
+        "healthcaremagic": {
+          "n": 10,
+          "similarity_pass_count": 3,
+          "detector_flags": 6,
+          "similarity_pass_rate": 0.3,
+          "mean_similarity_to_reference": 0.39823704212903976,
+          "fallback_used_count": 0,
+          "n_excluding_fallback": 10,
+          "similarity_pass_count_excluding_fallback": 3,
+          "similarity_pass_rate_excluding_fallback": 0.3,
+          "prompt_truncation_count": 20,
+          "mean_latency_seconds": 3.941018299899997
+        }
+      }
+    }
+  }
+}

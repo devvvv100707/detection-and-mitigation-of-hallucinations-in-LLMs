@@ -5,6 +5,7 @@ branches. Improved mitigation is not implemented here.
 """
 
 from dataclasses import dataclass
+import random
 import re
 
 from datasets import load_dataset
@@ -192,11 +193,13 @@ class BaselinePipeline:
         result = model(prompt, do_sample=False)
         ans = result[0]["generated_text"].strip()
         ans = re.sub(r'\b(\w+)( \1\b)+', r'\1', ans)
+        fallback_used = False
         if len(ans.split()) < 8 and context:
             lines = [line for line in context.split("\n") if line.startswith("A:")]
             if lines:
                 ans = lines[0].replace("A:", "").strip()
-        return ans
+                fallback_used = True
+        return ans, fallback_used
 
     def similarity_score(self, a, b):
         e1 = self.embedder.encode(a, convert_to_tensor=True)
@@ -232,8 +235,12 @@ class BaselinePipeline:
 
     def full_pipeline(self, query, source_hint="general"):
         context = self.retrieve_context(query)
-        student_ans = self.generate_answer(self.student_model, query, context, source_hint)
-        teacher_ans = self.generate_answer(self.teacher_model, query, context, source_hint)
+        student_ans, student_fallback = self.generate_answer(
+            self.student_model, query, context, source_hint
+        )
+        teacher_ans, teacher_fallback = self.generate_answer(
+            self.teacher_model, query, context, source_hint
+        )
         info = self.detect_hallucination(student_ans, teacher_ans, context)
         final, msg = self.mitigate(student_ans, teacher_ans, info)
         return {
@@ -243,4 +250,141 @@ class BaselinePipeline:
             "final_ans": final,
             "mitigation_msg": msg,
             "hallucination": info,
+            "student_fallback_used": student_fallback,
+            "teacher_fallback_used": teacher_fallback,
         }
+
+
+def normalize_question(text):
+    return " ".join(str(text).lower().split())
+
+
+def _dedupe(rows):
+    seen = set()
+    kept = []
+    dropped = 0
+    for row in rows:
+        key = normalize_question(row["question"])
+        if not key or key in seen:
+            dropped += 1
+            continue
+        seen.add(key)
+        kept.append(row)
+    return kept, dropped
+
+
+def _load_pool():
+    """Load both datasets and drop duplicate question text."""
+    pubmed = load_dataset("pubmed_qa", "pqa_labeled")["train"]
+    pubmed_rows = []
+    for index, item in enumerate(pubmed):
+        pubmed_rows.append({
+            "question": item["question"],
+            "true_answer": item["long_answer"],
+            "kb_context": " ".join(item["context"]["contexts"])[:800],
+            "kb_answer": item["long_answer"],
+            "source": "pubmed",
+            "row_index": index,
+        })
+    hcm = load_dataset("lavita/ChatDoctor-HealthCareMagic-100k", split="train")
+    hcm = hcm.filter(
+        lambda x: x["input"] and x["output"]
+        and len(x["input"].split()) > 5
+        and len(x["output"].split()) > 20
+    )
+    hcm_rows = []
+    for index, item in enumerate(hcm):
+        if len(item["output"].split()) < 20:
+            continue
+        hcm_rows.append({
+            "question": item["input"].strip(),
+            "true_answer": item["output"].strip(),
+            "kb_context": item["input"].strip()[:800],
+            "kb_answer": item["output"].strip()[:800],
+            "source": "healthcaremagic",
+            "row_index": index,
+        })
+    pubmed_rows, pubmed_dropped = _dedupe(pubmed_rows)
+    hcm_rows, hcm_dropped = _dedupe(hcm_rows)
+    return pubmed_rows, hcm_rows, pubmed_dropped, hcm_dropped
+
+
+def build_experiment_splits(config: PipelineConfig):
+    """Seeded validation/test split whose questions are absent from the KB.
+
+    This is not the original adjacent-slice split. main.py uses PubMedQA
+    train[0:150] as the knowledge base and train[150:160] as the only test
+    slice, with no shuffle and no validation split. The same pattern is used
+    after filtering HealthCareMagic. This function shuffles with config.seed,
+    holds out config.sample_size questions (split evenly across the two
+    sources, then half validation and half test), and builds the knowledge
+    base only from other rows.
+    """
+    if config.sample_size < 4 or config.sample_size % 4 != 0:
+        raise ValueError(
+            "sample_size must be a multiple of 4 so each source can split evenly into validation and test"
+        )
+    pubmed_rows, hcm_rows, pubmed_dropped, hcm_dropped = _load_pool()
+    rng = random.Random(config.seed)
+    per_source = config.sample_size // 2
+    heldout = []
+    knowledge = []
+    for source_rows in (pubmed_rows, hcm_rows):
+        order = list(range(len(source_rows)))
+        rng.shuffle(order)
+        chosen = order[:per_source]
+        rest = order[per_source:]
+        if len(chosen) < per_source:
+            raise ValueError("Not enough unique questions for the requested sample size")
+        val_n = per_source // 2
+        for position, index in enumerate(chosen):
+            row = dict(source_rows[index])
+            row["split"] = "validation" if position < val_n else "test"
+            heldout.append(row)
+        kb_added = 0
+        for index in rest:
+            if kb_added >= config.kb_size_per_source:
+                break
+            knowledge.append(source_rows[index])
+            kb_added += 1
+
+    held_keys = {normalize_question(row["question"]) for row in heldout}
+    knowledge = [row for row in knowledge if normalize_question(row["question"]) not in held_keys]
+    kb_keys = {normalize_question(row["question"]) for row in knowledge}
+    leaked = held_keys & kb_keys
+    if leaked:
+        raise RuntimeError(f"Knowledge base contains {len(leaked)} validation or test questions")
+
+    knowledge_data = [{
+        "question": row["question"],
+        "context": row["kb_context"],
+        "answer": row["kb_answer"],
+        "source": row["source"],
+    } for row in knowledge]
+    questions = []
+    for number, row in enumerate(heldout, start=1):
+        questions.append({
+            "question_id": f"{row['source']}_{row['split']}_{row['row_index']}",
+            "split": row["split"],
+            "source": row["source"],
+            "row_index": row["row_index"],
+            "question": row["question"],
+            "true_answer": row["true_answer"],
+        })
+    meta = {
+        "seed": config.seed,
+        "sample_size": config.sample_size,
+        "duplicates_removed": {"pubmed": pubmed_dropped, "healthcaremagic": hcm_dropped},
+        "n_validation": sum(row["split"] == "validation" for row in questions),
+        "n_test": sum(row["split"] == "test" for row in questions),
+        "n_knowledge": len(knowledge_data),
+        "leakage_count": 0,
+        "split_difference": (
+            "Original main.py split is unshuffled and has no validation set: "
+            "knowledge base indices 0-149 and test indices 150-159 within each source. "
+            "This split shuffles with the configured seed, holds out sample_size questions, "
+            "assigns the first half of each source's held-out rows to validation and the rest to test, "
+            "and excludes those questions from the knowledge base."
+        ),
+    }
+    return knowledge_data, questions, meta

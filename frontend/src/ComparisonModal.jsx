@@ -1,17 +1,40 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Bar, BarChart, CartesianGrid, ErrorBar, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { getResults } from "./api";
 
 export default function ComparisonModal({ onClose }) {
+  const dialogRef = useRef(null);
   const [rows, setRows] = useState([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
+    const previous = document.activeElement;
+    const bodyOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const root = dialogRef.current;
+    const focusable = () => Array.from(root.querySelectorAll("button, a, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])"));
+    focusable()[0]?.focus();
     function onKey(event) {
       if (event.key === "Escape") onClose();
+      if (event.key !== "Tab") return;
+      const items = focusable();
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     }
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = bodyOverflow;
+      window.removeEventListener("keydown", onKey);
+      previous?.focus?.();
+    };
   }, [onClose]);
 
   useEffect(() => {
@@ -34,24 +57,26 @@ export default function ComparisonModal({ onClose }) {
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal card" onClick={(event) => event.stopPropagation()} role="dialog">
-        <h3>Test similarity pass rate</h3>
+      <div className="modal card" role="dialog" aria-modal="true" aria-labelledby="compare-title" ref={dialogRef} onClick={(event) => event.stopPropagation()}>
+        <h2 id="compare-title" className="section-title">Test similarity pass rate</h2>
         <p className="muted">Cosine similarity above 0.52. Not factual accuracy. Bars show 95% Wilson intervals.</p>
-        {error && <p className="error-text">{error}</p>}
+        {error && <p className="banner banner-danger">{error}</p>}
         {rows.length > 0 && (
-          <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={rows}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis domain={[0, 1]} />
-              <Tooltip formatter={(value, _name, item) => [`${item.payload.wins}/${item.payload.n} (${(value * 100).toFixed(0)}%)`, "Similarity pass rate"]} />
-              <Bar dataKey="rate" fill="#2f6fed">
-                <ErrorBar dataKey="error" width={4} stroke="#16325c" />
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+          <div className="chart-body">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={rows}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" interval={0} tick={{ fontSize: 12 }} />
+                <YAxis domain={[0, 1]} tick={{ fontSize: 12 }} />
+                <Tooltip formatter={(value, _name, item) => [`${item.payload.wins}/${item.payload.n} (${(value * 100).toFixed(0)}%)`, "Similarity pass rate"]} />
+                <Bar dataKey="rate" fill="#2f5fd0">
+                  <ErrorBar dataKey="error" width={4} stroke="#1c2740" />
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         )}
-        <button type="button" className="primary" onClick={onClose}>Close</button>
+        <button type="button" className="btn btn-primary" onClick={onClose}>Close</button>
       </div>
     </div>
   );

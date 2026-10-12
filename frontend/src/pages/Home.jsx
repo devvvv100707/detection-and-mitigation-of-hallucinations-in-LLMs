@@ -2,20 +2,27 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { analyzeQuestion, getResults } from "../api";
 import ComparisonModal from "../ComparisonModal";
+import { CheckIcon, DatabaseIcon, DocumentIcon, SearchIcon, WarningIcon } from "../components/Icons";
+import { Badge, Card, SimilarityBar, StatTile } from "../components/ui";
 
 const TIER_LABEL = {
   accepted: "Accepted answer",
   revised: "Revised Answer",
   uncertain: "Uncertainty Warning",
 };
+const TIER_TONE = { accepted: "accepted", revised: "revised", uncertain: "uncertain" };
 
 function percent(value) {
   return `${Math.round(value * 100)}%`;
 }
 
+function formatSeconds(value) {
+  return `${Number(value).toFixed(2)}s`;
+}
+
 export default function Home({ health }) {
   const [question, setQuestion] = useState("");
-  const [example, setExample] = useState("");
+  const [examples, setExamples] = useState([]);
   const [original, setOriginal] = useState(null);
   const [resultsError, setResultsError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -28,28 +35,35 @@ export default function Home({ health }) {
     getResults()
       .then((body) => {
         setOriginal(body.original_experiment);
-        setExample(body.example_question || "");
+        setExamples(body.example_question ? [body.example_question] : []);
       })
       .catch((err) => setResultsError(err.message));
   }, []);
 
   async function submit(event) {
-    event.preventDefault();
+    event?.preventDefault();
     if (!question.trim() || busy || !health.ready) return;
     setBusy(true);
     setError("");
-    setAnalysis(null);
     try {
       const body = await analyzeQuestion(question.trim());
       setAnalysis(body);
       setShowEvidence(false);
     } catch (err) {
+      setAnalysis(null);
       setError(err.message);
     } finally {
       setBusy(false);
     }
   }
 
+  const disabledReason = !question.trim()
+    ? "Enter a question to enable analysis."
+    : !health.ready
+      ? "Analysis is disabled until the models are ready."
+      : busy
+        ? "Analysis is running."
+        : "";
   const supported = analysis && (
     analysis.tier === "uncertain"
       ? false
@@ -59,117 +73,134 @@ export default function Home({ health }) {
   );
 
   return (
-    <main>
-      <p className="disclaimer">
-        Research prototype, not medical advice. Outputs may be wrong. Do not use this for medical decisions.
-      </p>
-      <section className="card">
-        <h2>Ask a Healthcare Question</h2>
+    <main className="container stack">
+      <Card>
+        <h2 className="section-title">Ask a Healthcare Question</h2>
+        <p className="card-desc">The student and teacher models answer from retrieved evidence, then configuration E keeps, revises, or withholds the answer.</p>
         <form onSubmit={submit}>
-          <textarea
-            value={question}
-            onChange={(event) => setQuestion(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === "Enter" && !event.shiftKey) submit(event);
-            }}
-            maxLength={500}
-            rows={4}
-            placeholder="Type a healthcare question"
-          />
-          {example && (
-            <button type="button" className="linkish" onClick={() => setQuestion(example)}>
-              {example}
+          <div className="ask-row">
+            <label className="visually-hidden" htmlFor="question">Healthcare question</label>
+            <textarea
+              id="question"
+              value={question}
+              onChange={(event) => setQuestion(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" && !event.shiftKey) submit(event);
+              }}
+              maxLength={500}
+              rows={2}
+              placeholder="Type a healthcare question"
+            />
+            <button type="submit" className="btn btn-primary" disabled={Boolean(disabledReason)}>
+              {busy ? "Analyzing..." : "Analyze Answer"}
             </button>
+          </div>
+          <p className="counter" aria-live="polite">{question.length}/500 {disabledReason}</p>
+          {examples.length > 0 && (
+            <div className="chips">
+              <span className="muted">Try an example:</span>
+              {examples.map((item) => (
+                <button key={item} type="button" className="chip" onClick={() => setQuestion(item)}>{item}</button>
+              ))}
+            </div>
           )}
-          <button type="submit" className="primary" disabled={!question.trim() || busy || !health.ready}>
-            {busy ? "Analyzing..." : "Analyze Answer"}
-          </button>
         </form>
-        {error && <p className="error-text">{error}</p>}
-      </section>
+      </Card>
 
-      {busy && <p className="card">Loading analysis...</p>}
-
-      {analysis && (
-        <section className="grid">
-          <article className="card">
-            <h3>Student Response <span className="pill">FLAN-T5-small</span></h3>
-            <p>{analysis.student_answer}</p>
-          </article>
-          <article className="card">
-            <h3>Teacher Response <span className="pill">FLAN-T5-base</span></h3>
-            <p>{analysis.teacher_answer || "The teacher model was not called because the student answer was Supported."}</p>
-          </article>
-          <article className="card">
-            <h3>Final Response <span className={`pill tier-${analysis.tier}`}>{TIER_LABEL[analysis.tier]}</span></h3>
-            <p>{analysis.final_answer}</p>
-            <h4>Why this response?</h4>
-            <ul>{analysis.reasons.map((reason) => <li key={reason}>{reason}</li>)}</ul>
-          </article>
-          <article className="card">
-            <h3>
-              Verification & Analysis
-              <span className={`pill ${supported ? "ok" : "review"}`}>{supported ? "Supported" : "Needs Review"}</span>
-            </h3>
-            <Bar label="Student–teacher similarity" value={analysis.similarities.student_teacher} />
-            <Bar label="Student–evidence similarity" value={analysis.similarities.student_evidence} />
-            <Bar label="Teacher–evidence similarity" value={analysis.similarities.teacher_evidence} />
-            <p className="footnote">Similarity scores measure text similarity, not factual correctness.</p>
-            {analysis.evidence && (
-              <div>
-                <h4>Retrieved Evidence (Top result)</h4>
-                <p className="muted">{analysis.evidence.source} · similarity {analysis.evidence.similarity.toFixed(3)}</p>
-                <p className={showEvidence ? "" : "clamp"}>{analysis.evidence.text}</p>
-                <button type="button" className="linkish" onClick={() => setShowEvidence((open) => !open)}>
-                  {showEvidence ? "Show less" : "Show full evidence"}
-                </button>
-              </div>
+      <div aria-live="polite">
+        {!analysis && !busy && !error && (
+          <Card>
+            <h2 className="section-title">Analysis Results</h2>
+            <p>Ask a question to see the student response, the teacher response when it is called, the final tier, evidence similarity, and the retrieved passage.</p>
+          </Card>
+        )}
+        {busy && (
+          <Card>
+            <h2 className="section-title"><span className="spinner" aria-hidden="true" /> Loading analysis...</h2>
+            <div className="skeleton" />
+            <div className="skeleton" />
+            <div className="skeleton" />
+          </Card>
+        )}
+        {error && (
+          <Card>
+            <h2 className="section-title">Analysis failed</h2>
+            <p>{error}</p>
+            <button type="button" className="btn btn-secondary" onClick={() => submit()}>Retry</button>
+          </Card>
+        )}
+        {analysis && (
+          <>
+            <div className="results-grid">
+              <Card>
+                <h2 className="card-title">Student Response <Badge tone="model">FLAN-T5-small</Badge></h2>
+                <p className="answer-text">{analysis.student_answer}</p>
+              </Card>
+              <Card>
+                <h2 className="card-title">Teacher Response <Badge tone="model">FLAN-T5-base</Badge></h2>
+                <p className="answer-text">{analysis.teacher_answer == null ? "Not computed" : analysis.teacher_answer}</p>
+                {analysis.teacher_answer == null && <p className="muted">The teacher model was not called for this question.</p>}
+              </Card>
+              <Card>
+                <h2 className="card-title">Final Response <Badge tone={TIER_TONE[analysis.tier]}>{TIER_LABEL[analysis.tier]}</Badge></h2>
+                <p className="answer-text">{analysis.final_answer}</p>
+                <h3 className="card-title">Why this response?</h3>
+                <ul className="why">{analysis.reasons.map((reason) => <li key={reason}>{reason}</li>)}</ul>
+              </Card>
+              <Card>
+                <h2 className="card-title">
+                  Verification & Analysis
+                  <Badge tone={supported ? "supported" : "review"}>{supported ? "Supported" : "Needs Review"}</Badge>
+                </h2>
+                <p className="muted">Supported means the answer text is similar to the retrieved evidence. It does not confirm medical correctness.</p>
+                <SimilarityBar label="Student–teacher similarity" value={analysis.similarities.student_teacher} />
+                <SimilarityBar label="Student–evidence similarity" value={analysis.similarities.student_evidence} />
+                <SimilarityBar label="Teacher–evidence similarity" value={analysis.similarities.teacher_evidence} />
+                <p className="footnote muted">Similarity scores measure text similarity, not factual correctness.</p>
+                {analysis.evidence && (
+                  <div>
+                    <h3 className="card-title">Retrieved Evidence (Top result)</h3>
+                    <p className="muted"><Badge tone="model">{analysis.evidence.source}</Badge> similarity {analysis.evidence.similarity.toFixed(3)}</p>
+                    <p className={showEvidence ? "evidence open answer-text" : "evidence answer-text"}>{analysis.evidence.text}</p>
+                    <button type="button" className="btn btn-ghost" onClick={() => setShowEvidence((open) => !open)}>
+                      {showEvidence ? "Show less" : "Show full evidence"}
+                    </button>
+                  </div>
+                )}
+              </Card>
+            </div>
+            {analysis.latency && (
+              <p className="meta">
+                {Object.entries(analysis.latency).map(([name, seconds]) => (
+                  <span key={name}>{name.replaceAll("_", " ")} {formatSeconds(seconds)}</span>
+                ))}
+              </p>
             )}
-          </article>
-        </section>
-      )}
+          </>
+        )}
+      </div>
 
-      <section className="card">
-        <h2>Research Results (Existing Experiment)</h2>
-        {resultsError && <p className="error-text">{resultsError}</p>}
+      <Card>
+        <h2 className="section-title">Research Results (Existing Experiment)</h2>
+        {resultsError && <p className="banner banner-danger">{resultsError}</p>}
         {original && (
           <>
-            <p className="muted">Original preliminary experiment, not reproducible. These are similarity-threshold results, not verified factual accuracy.</p>
-            <div className="tiles">
-              <Tile label="Questions Evaluated" value={String(original.n_questions)} />
-              <Tile label="Detections Recorded" value={original.detector_flag_rate_count} />
-              <Tile label="Similarity-Threshold Pass Rate" value={percent(original.similarity_pass_rate)} />
-              <Tile label="PubMedQA pass rate" value={percent(original.pubmed_similarity_pass_rate)} />
-              <Tile label="HealthCareMagic pass rate" value={percent(original.healthcaremagic_similarity_pass_rate)} />
+            <p className="muted">Original preliminary experiment, not reproducible. These are similarity-threshold results, not independently verified factual accuracy.</p>
+            <div className="stat-row">
+              <StatTile icon={<DocumentIcon />} label="Questions Evaluated" value={String(original.n_questions)} />
+              <StatTile icon={<WarningIcon />} label="Detections Recorded" value={original.detector_flag_rate_count} />
+              <StatTile icon={<CheckIcon />} label="Similarity-Threshold Pass Rate" value={percent(original.similarity_pass_rate)} />
+              <StatTile icon={<DatabaseIcon />} label="PubMedQA pass rate" value={percent(original.pubmed_similarity_pass_rate)} />
+              <StatTile icon={<SearchIcon />} label="HealthCareMagic pass rate" value={percent(original.healthcaremagic_similarity_pass_rate)} />
             </div>
             <div className="row-actions">
-              <Link to="/results">View Detailed Results →</Link>
-              <button type="button" className="primary" onClick={() => setModal(true)}>View comparison graph</button>
+              <Link className="btn btn-ghost" to="/results">View Detailed Results →</Link>
+              <button type="button" className="btn btn-primary" onClick={() => setModal(true)}>View comparison graph</button>
             </div>
           </>
         )}
-      </section>
+      </Card>
       {modal && <ComparisonModal onClose={() => setModal(false)} />}
     </main>
-  );
-}
-
-function Bar({ label, value }) {
-  const width = value == null ? 0 : Math.max(0, Math.min(1, value)) * 100;
-  return (
-    <div className="bar-row">
-      <span>{label}</span>
-      <div className="bar"><span style={{ width: `${width}%` }} /></div>
-      <span>{value == null ? "n/a" : value.toFixed(2)}</span>
-    </div>
-  );
-}
-
-function Tile({ label, value }) {
-  return (
-    <div className="tile">
-      <strong>{value}</strong>
-      <span>{label}</span>
-    </div>
   );
 }

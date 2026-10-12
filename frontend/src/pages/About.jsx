@@ -1,43 +1,33 @@
-import React from "react";
+import React, { Fragment } from "react";
+import { Card } from "../components/ui";
+
+const STEPS = ["Question", "Retrieval", "Student / Teacher", "Verification", "Three-tier mitigation", "Final answer"];
 
 export default function About() {
   return (
-    <main>
-      <section className="card">
-        <h2>Problem</h2>
-        <p>
-          A smaller healthcare model can produce an answer that sounds fluent but does not follow the retrieved evidence.
-          This prototype compares that student answer with a larger teacher model and with the retrieved text, then either
-          keeps the student answer, replaces it with a supported teacher answer, or says the evidence is insufficient.
-        </p>
-      </section>
-      <section className="card">
-        <h2>Architecture</h2>
-        <p>
-          The student is FLAN-T5-small and the teacher is FLAN-T5-base. Retrieval embeds the question with
-          all-MiniLM-L6-v2 and keeps nearby knowledge-base rows. Cosine similarity is a text-overlap score.
-          Configuration E checks whether that score against the retrieved context reaches the verify cutoff.
-          The three tiers are accept, corrected, and uncertain. Student and teacher sentences are not blended,
-          and a short answer is not replaced by copying a retrieved line.
-        </p>
-      </section>
-      <section className="card">
-        <h2>Datasets</h2>
-        <p>
-          PubMedQA, configuration pqa_labeled, and lavita/ChatDoctor-HealthCareMagic-100k.
-          The static list in knowledge.py is unused.
-        </p>
-      </section>
-      <section className="card">
-        <h2>How to read the scores</h2>
-        <p>
-          A similarity pass means the answer’s MiniLM cosine similarity to the reference text is above 0.52.
-          That is not a judgment that the answer is medically correct. The detector flag is a separate count:
-          it marks low student–teacher agreement, low overlap with the retrieved context, or a very short student answer.
-        </p>
-      </section>
-      <section className="card">
-        <h2>Limitations</h2>
+    <main className="container stack">
+      <h2 className="section-title">About</h2>
+      <Card title="Problem">
+        <p>A smaller healthcare model can produce a fluent answer that does not follow the retrieved evidence. This prototype compares that student answer with a larger teacher model and with the retrieved text, then keeps it, replaces it, or says the evidence is insufficient.</p>
+      </Card>
+      <Card title="Architecture">
+        <div className="flow" aria-label="Pipeline diagram">
+          {STEPS.map((step, index) => (
+            <Fragment key={step}>
+              <div className="flow-box">{step}</div>
+              {index < STEPS.length - 1 && <span className="arrow" aria-hidden="true">→</span>}
+            </Fragment>
+          ))}
+        </div>
+        <p>The student is FLAN-T5-small and the teacher is FLAN-T5-base. Retrieval uses all-MiniLM-L6-v2 cosine similarity. Configuration E checks whether the answer is similar enough to the retrieved context. The tiers are accept, corrected, and uncertain. Answers are not blended, and retrieved lines are not copied into the response.</p>
+      </Card>
+      <Card title="Datasets">
+        <p>PubMedQA, configuration pqa_labeled, and lavita/ChatDoctor-HealthCareMagic-100k. The static list in knowledge.py is unused.</p>
+      </Card>
+      <Card title="How to read the scores">
+        <p>A similarity pass means MiniLM cosine similarity to the reference text is above 0.52. That is not a judgment that the answer is medically correct. The detector flag is a separate count for low student–teacher agreement, low overlap with retrieved context, or a very short student answer.</p>
+      </Card>
+      <Card title="Limitations">
         <ul>
           <li>The comparison uses 20 validation and 20 test questions.</li>
           <li>Doctor replies in HealthCareMagic are not verified ground truth.</li>
@@ -45,7 +35,7 @@ export default function About() {
           <li>The verify cutoff was chosen using similarity to the reference on the validation split.</li>
           <li>This is a research prototype, not medical advice.</li>
         </ul>
-      </section>
+      </Card>
     </main>
   );
 }

@@ -1,0 +1,70 @@
+Generating train split:   0%|          | 0/1000 [00:00<?, ? examples/s]Generating train split: 100%|██████████| 1000/1000 [00:00<00:00, 43482.31 examples/s]
+Generating train split:   0%|          | 0/112165 [00:00<?, ? examples/s]Generating train split:  45%|████▍     | 50000/112165 [00:00<00:00, 482698.68 examples/s]Generating train split: 100%|██████████| 112165/112165 [00:00<00:00, 564656.96 examples/s]
+Filter:   0%|          | 0/112165 [00:00<?, ? examples/s]Filter:  13%|█▎        | 15000/112165 [00:00<00:00, 141435.38 examples/s]Filter:  28%|██▊       | 31000/112165 [00:00<00:00, 142603.86 examples/s]Filter:  42%|████▏     | 47000/112165 [00:00<00:00, 145084.15 examples/s]Filter:  56%|█████▌    | 63000/112165 [00:00<00:00, 146687.02 examples/s]Filter:  70%|███████   | 79000/112165 [00:00<00:00, 146579.79 examples/s]Filter:  85%|████████▍ | 95000/112165 [00:00<00:00, 145870.38 examples/s]Filter:  99%|█████████▉| 111000/112165 [00:00<00:00, 144705.72 examples/s]Filter: 100%|██████████| 112165/112165 [00:00<00:00, 144388.59 examples/s]
+/home/ubuntu/.local/lib/python3.12/site-packages/huggingface_hub/file_download.py:949: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+Token indices sequence length is longer than the specified maximum sequence length for this model (593 > 512). Running this sequence through the model will result in indexing errors
+Token indices sequence length is longer than the specified maximum sequence length for this model (593 > 512). Running this sequence through the model will result in indexing errors
+Q1 pubmed flag=False student=0.573 teacher=0.845 final=0.845 Moderate confidence → Preferred Teacher
+Q2 pubmed flag=False student=0.708 teacher=0.263 final=0.429 Low confidence → Blended Student + Teacher
+Q3 pubmed flag=False student=0.537 teacher=0.578 final=0.624 Low confidence → Blended Student + Teacher
+Q4 pubmed flag=True student=0.736 teacher=0.294 final=0.294 Hallucination detected → Replaced with Teacher
+Q5 pubmed flag=True student=0.356 teacher=0.510 final=0.510 Hallucination detected → Replaced with Teacher
+Q6 pubmed flag=False student=0.457 teacher=0.679 final=0.591 Low confidence → Blended Student + Teacher
+Q7 pubmed flag=False student=0.531 teacher=0.537 final=0.531 High confidence → Student answer accepted
+Q8 pubmed flag=False student=0.347 teacher=0.357 final=0.347 High confidence → Student answer accepted
+Q9 pubmed flag=False student=0.378 teacher=0.462 final=0.606 Low confidence → Blended Student + Teacher
+Q10 pubmed flag=False student=0.801 teacher=0.687 final=0.801 High confidence → Student answer accepted
+Q11 healthcaremagic flag=True student=0.435 teacher=0.342 final=0.342 Hallucination detected → Replaced with Teacher
+Q12 healthcaremagic flag=True student=0.315 teacher=0.631 final=0.631 Hallucination detected → Replaced with Teacher
+Q13 healthcaremagic flag=False student=0.461 teacher=0.530 final=0.461 High confidence → Student answer accepted
+Q14 healthcaremagic flag=False student=0.578 teacher=0.456 final=0.585 Low confidence → Blended Student + Teacher
+Q15 healthcaremagic flag=False student=0.241 teacher=0.348 final=0.241 High confidence → Student answer accepted
+Q16 healthcaremagic flag=False student=0.363 teacher=0.599 final=0.590 Low confidence → Blended Student + Teacher
+Q17 healthcaremagic flag=False student=0.522 teacher=0.522 final=0.660 Low confidence → Blended Student + Teacher
+Q18 healthcaremagic flag=True student=0.068 teacher=0.276 final=0.276 Hallucination detected → Replaced with Teacher
+Q19 healthcaremagic flag=True student=0.133 teacher=0.352 final=0.352 Hallucination detected → Replaced with Teacher
+Q20 healthcaremagic flag=False student=0.466 teacher=0.249 final=0.558 Low confidence → Blended Student + Teacher
+{
+  "mode": "baseline",
+  "note": "Fresh baseline-mode run. Not claimed to match hallucination_results.png. Similarity-threshold pass rate is not factual accuracy.",
+  "device": "cpu",
+  "n_questions": 20,
+  "n_knowledge": 300,
+  "seed_recorded": 42,
+  "seed_used_for_sampling": false,
+  "sample_size_config": 20,
+  "models": {
+    "student": "google/flan-t5-small",
+    "teacher": "google/flan-t5-base",
+    "embedder": "all-MiniLM-L6-v2"
+  },
+  "thresholds": {
+    "retrieval_min_score": 0.25,
+    "detection": 0.38,
+    "blend": 0.55,
+    "prefer_teacher": 0.7,
+    "pubmed_pass": 0.52,
+    "hcm_pass": 0.52
+  },
+  "detector_flags": 6,
+  "mean_student_similarity": 0.45033905282616615,
+  "mean_teacher_similarity": 0.4760092504322529,
+  "mean_final_similarity": 0.5136871688067913,
+  "similarity_pass_rate": 0.55,
+  "pubmed_pass_rate": 0.6,
+  "hcm_pass_rate": 0.5,
+  "threshold_failure_rate": 0.44999999999999996,
+  "mean_latency_seconds": 3.0296437572500055,
+  "difference_from_preserved_figure": {
+    "n_questions": 0,
+    "detector_flags": 1,
+    "mean_student_similarity": -0.011660947173833869,
+    "mean_teacher_similarity": -0.09299074956774706,
+    "mean_final_similarity": -0.04231283119320872,
+    "similarity_pass_rate": -0.09999999999999998,
+    "pubmed_pass_rate": -0.09999999999999998,
+    "hcm_pass_rate": -0.09999999999999998,
+    "threshold_failure_rate": 0.09999999999999998
+  }
+}

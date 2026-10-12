@@ -57,3 +57,40 @@ These two rates answer different questions. Five of 20 answers were flagged by t
 - Threshold-derived failure rate: 35%
 
 A later baseline-mode reimplementation should be compared with these figures and any difference reported. A match is not assumed. Dataset revisions, model weight revisions, and the lack of a seed or saved predictions can change a fresh run.
+
+## Reproduction attempt
+
+`src/pipeline.py` baseline mode was run once (`outputs/baseline_metrics.json`). Thresholds were not changed to close the gap. The original figure in `hallucination_results.png` is preserved and is not reproducible under this environment. The reproduced baseline below is the reference for all new comparisons.
+
+| Metric | Original figure | Reproduced baseline |
+| --- | --- | --- |
+| Questions | 20 | 20 |
+| Detector flags | 5 | 6 |
+| Mean student similarity | 0.462 | 0.450 |
+| Mean teacher similarity | 0.569 | 0.476 |
+| Mean final similarity | 0.556 | 0.514 |
+| Similarity-threshold pass rate | 65% | 55% |
+| PubMedQA pass rate | 70% | 60% |
+| HealthCareMagic pass rate | 60% | 50% |
+| Threshold-derived failure rate | 35% | 45% |
+
+Device for the reproduction: CPU. Mean latency: about 3.03 seconds per question. The original figure does not record its device or library versions.
+
+### Audit of `src/pipeline.py` against `main.py`
+
+Prompts, numeric thresholds (0.25, 0.38, 0.55, 0.70, 0.52), `top_k=5`, truncation lengths (knowledge context 800, HealthCareMagic answer 800, retrieved context display 300, joined context 2000, blend 20 and 60 words, short-answer fallback under 8 words, detector short-answer under 10 words), generation argument (`do_sample=False` only), model names, `max_new_tokens` (180 student, 200 teacher), device selection order, knowledge-base indices (`train[0:150]` per source after the HealthCareMagic filter), and test indices (`[150:160]`) match `main.py`.
+
+One call differs: knowledge-base `encode` uses `show_progress_bar=False` in `src/pipeline.py` and `show_progress_bar=True` in `main.py` line 137. That flag does not change the vectors. The new code also has no chat loop, which `main.py` runs after evaluation.
+
+### Library versions for the reproduction
+
+- torch 2.14.1+cpu
+- transformers 4.40.1
+- sentence-transformers 3.1.1
+- datasets 4.8.2
+
+### Truncation
+
+The reproduction log warned that a prompt was 593 tokens, above FLAN-T5’s 512-token limit. Tokens past that limit are dropped before generation. `main.py` builds the same prompt, so the same truncation applies there. The warning is not a threshold change.
+
+`annotations/manual_labels.csv` has question ids Q1–Q20 and an empty `label` column. Allowed labels, to be filled manually, are Supported/correct, Hallucinated or contradicted, and Uncertain/insufficient evidence. Precision, recall, F1, and a confusion matrix are not computed until those cells are filled.

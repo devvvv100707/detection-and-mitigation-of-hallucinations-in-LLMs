@@ -1,0 +1,251 @@
+{
+  "note": "MiniLM cosine similarity of the saved E student answer to the dataset reference. Not a new generation run.",
+  "validation": {
+    "mean_student_similarity_to_reference": 0.40910979826003313
+  },
+  "test": {
+    "mean_student_similarity_to_reference": 0.43551268950104716
+  },
+  "per_question": [
+    {
+      "question_id": "pubmed_validation_776",
+      "split": "validation",
+      "student_similarity_to_reference": 0.7119158506393433,
+      "final_similarity_to_reference": 0.7119158506393433
+    },
+    {
+      "question_id": "pubmed_validation_507",
+      "split": "validation",
+      "student_similarity_to_reference": 0.3188321590423584,
+      "final_similarity_to_reference": 0.604411244392395
+    },
+    {
+      "question_id": "pubmed_validation_895",
+      "split": "validation",
+      "student_similarity_to_reference": 0.5135290622711182,
+      "final_similarity_to_reference": 0.5135290622711182
+    },
+    {
+      "question_id": "pubmed_validation_922",
+      "split": "validation",
+      "student_similarity_to_reference": 0.49739962816238403,
+      "final_similarity_to_reference": 0.49739962816238403
+    },
+    {
+      "question_id": "pubmed_validation_33",
+      "split": "validation",
+      "student_similarity_to_reference": 0.5133890509605408,
+      "final_similarity_to_reference": 0.7582173943519592
+    },
+    {
+      "question_id": "pubmed_validation_483",
+      "split": "validation",
+      "student_similarity_to_reference": 0.1797453612089157,
+      "final_similarity_to_reference": 0.1797453612089157
+    },
+    {
+      "question_id": "pubmed_validation_85",
+      "split": "validation",
+      "student_similarity_to_reference": 0.24683792889118195,
+      "final_similarity_to_reference": 0.08548140525817871
+    },
+    {
+      "question_id": "pubmed_validation_750",
+      "split": "validation",
+      "student_similarity_to_reference": 0.8099851012229919,
+      "final_similarity_to_reference": 0.8099851012229919
+    },
+    {
+      "question_id": "pubmed_validation_354",
+      "split": "validation",
+      "student_similarity_to_reference": 0.04123363271355629,
+      "final_similarity_to_reference": 0.258609414100647
+    },
+    {
+      "question_id": "pubmed_validation_523",
+      "split": "validation",
+      "student_similarity_to_reference": 0.5080423355102539,
+      "final_similarity_to_reference": 0.05162058025598526
+    },
+    {
+      "question_id": "healthcaremagic_validation_84919",
+      "split": "validation",
+      "student_similarity_to_reference": 0.1426738202571869,
+      "final_similarity_to_reference": 0.18436191976070404
+    },
+    {
+      "question_id": "healthcaremagic_validation_63861",
+      "split": "validation",
+      "student_similarity_to_reference": 0.105802983045578,
+      "final_similarity_to_reference": 0.1962350457906723
+    },
+    {
+      "question_id": "healthcaremagic_validation_68992",
+      "split": "validation",
+      "student_similarity_to_reference": 0.726552426815033,
+      "final_similarity_to_reference": 0.726552426815033
+    },
+    {
+      "question_id": "healthcaremagic_validation_37810",
+      "split": "validation",
+      "student_similarity_to_reference": 0.08856451511383057,
+      "final_similarity_to_reference": 0.23639890551567078
+    },
+    {
+      "question_id": "healthcaremagic_validation_89911",
+      "split": "validation",
+      "student_similarity_to_reference": 0.525116503238678,
+      "final_similarity_to_reference": 0.525116503238678
+    },
+    {
+      "question_id": "healthcaremagic_validation_50243",
+      "split": "validation",
+      "student_similarity_to_reference": 0.19459722936153412,
+      "final_similarity_to_reference": 0.0
+    },
+    {
+      "question_id": "healthcaremagic_validation_33320",
+      "split": "validation",
+      "student_similarity_to_reference": 0.6868836283683777,
+      "final_similarity_to_reference": 0.6868836283683777
+    },
+    {
+      "question_id": "healthcaremagic_validation_25600",
+      "split": "validation",
+      "student_similarity_to_reference": 0.14379708468914032,
+      "final_similarity_to_reference": 0.6719812154769897
+    },
+    {
+      "question_id": "healthcaremagic_validation_94946",
+      "split": "validation",
+      "student_similarity_to_reference": 0.6203263401985168,
+      "final_similarity_to_reference": 0.6874748468399048
+    },
+    {
+      "question_id": "healthcaremagic_validation_87201",
+      "split": "validation",
+      "student_similarity_to_reference": 0.6069713234901428,
+      "final_similarity_to_reference": 0.6069713234901428
+    },
+    {
+      "question_id": "pubmed_test_184",
+      "split": "test",
+      "student_similarity_to_reference": 0.5000072121620178,
+      "final_similarity_to_reference": 0.5000072121620178
+    },
+    {
+      "question_id": "pubmed_test_809",
+      "split": "test",
+      "student_similarity_to_reference": 0.5382327437400818,
+      "final_similarity_to_reference": 0.06794120371341705
+    },
+    {
+      "question_id": "pubmed_test_418",
+      "split": "test",
+      "student_similarity_to_reference": 0.8173588514328003,
+      "final_similarity_to_reference": 0.8173588514328003
+    },
+    {
+      "question_id": "pubmed_test_615",
+      "split": "test",
+      "student_similarity_to_reference": 0.7116639018058777,
+      "final_similarity_to_reference": 0.7116639018058777
+    },
+    {
+      "question_id": "pubmed_test_682",
+      "split": "test",
+      "student_similarity_to_reference": 0.26199713349342346,
+      "final_similarity_to_reference": 0.4378603398799896
+    },
+    {
+      "question_id": "pubmed_test_501",
+      "split": "test",
+      "student_similarity_to_reference": 0.605339765548706,
+      "final_similarity_to_reference": 0.605339765548706
+    },
+    {
+      "question_id": "pubmed_test_760",
+      "split": "test",
+      "student_similarity_to_reference": 0.36039066314697266,
+      "final_similarity_to_reference": 0.36039066314697266
+    },
+    {
+      "question_id": "pubmed_test_49",
+      "split": "test",
+      "student_similarity_to_reference": 0.4523351192474365,
+      "final_similarity_to_reference": 0.4523351192474365
+    },
+    {
+      "question_id": "pubmed_test_732",
+      "split": "test",
+      "student_similarity_to_reference": 0.5760242342948914,
+      "final_similarity_to_reference": 0.5760242342948914
+    },
+    {
+      "question_id": "pubmed_test_336",
+      "split": "test",
+      "student_similarity_to_reference": 0.3237169086933136,
+      "final_similarity_to_reference": 0.008074652403593063
+    },
+    {
+      "question_id": "healthcaremagic_test_44108",
+      "split": "test",
+      "student_similarity_to_reference": 0.469589501619339,
+      "final_similarity_to_reference": 0.469589501619339
+    },
+    {
+      "question_id": "healthcaremagic_test_2675",
+      "split": "test",
+      "student_similarity_to_reference": 0.21834440529346466,
+      "final_similarity_to_reference": 0.0
+    },
+    {
+      "question_id": "healthcaremagic_test_34601",
+      "split": "test",
+      "student_similarity_to_reference": 0.416294664144516,
+      "final_similarity_to_reference": 0.416294664144516
+    },
+    {
+      "question_id": "healthcaremagic_test_106854",
+      "split": "test",
+      "student_similarity_to_reference": 0.03398393839597702,
+      "final_similarity_to_reference": 0.0
+    },
+    {
+      "question_id": "healthcaremagic_test_67517",
+      "split": "test",
+      "student_similarity_to_reference": 0.12142223864793777,
+      "final_similarity_to_reference": 0.1562289148569107
+    },
+    {
+      "question_id": "healthcaremagic_test_3960",
+      "split": "test",
+      "student_similarity_to_reference": 0.7809712886810303,
+      "final_similarity_to_reference": 0.7809712886810303
+    },
+    {
+      "question_id": "healthcaremagic_test_42340",
+      "split": "test",
+      "student_similarity_to_reference": 0.3319985270500183,
+      "final_similarity_to_reference": 0.6546055674552917
+    },
+    {
+      "question_id": "healthcaremagic_test_101817",
+      "split": "test",
+      "student_similarity_to_reference": 0.4017983078956604,
+      "final_similarity_to_reference": 0.0
+    },
+    {
+      "question_id": "healthcaremagic_test_22814",
+      "split": "test",
+      "student_similarity_to_reference": 0.17055588960647583,
+      "final_similarity_to_reference": 0.09627977758646011
+    },
+    {
+      "question_id": "healthcaremagic_test_55667",
+      "split": "test",
+      "student_similarity_to_reference": 0.6182284951210022,
+      "final_similarity_to_reference": 0.6182284951210022
+    }
+  ]
+}
